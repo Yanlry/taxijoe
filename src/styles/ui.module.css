@@ -53,23 +53,6 @@
   color: var(--color-yellow);
 }
 
-/* Contour noir, sur fond jaune */
-.outlineDark {
-  composes: button;
-  border-color: var(--color-ink);
-  background: transparent;
-  color: var(--color-ink);
-}
-
-.outlineDark:hover {
-  background: var(--color-ink);
-  color: var(--color-yellow);
-}
-
-.outlineDark:focus-visible {
-  outline-color: var(--color-ink);
-}
-
 /* Variante compacte (garde 48px de haut) */
 .compact {
   padding-inline: 20px;

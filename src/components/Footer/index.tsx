@@ -5,7 +5,6 @@ import {
   Clock,
   FileText,
   IdCard,
-  Mail,
   MapPin,
   Navigation,
   Phone,

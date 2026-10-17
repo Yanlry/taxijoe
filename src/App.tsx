@@ -1,9 +1,9 @@
-import { BookingForm } from './components/BookingForm';
 import { CheckerBand } from './components/CheckerBand';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Meter } from './components/Meter';
+import { PhoneBooking } from './components/PhoneBooking';
 import { Services } from './components/Services';
 
 /** Page unique du site Taxi Joe : les sections dans l'ordre, séparées par des bandes damier. */
@@ -21,7 +21,7 @@ export default function App() {
         <CheckerBand />
         <Services />
         <CheckerBand />
-        <BookingForm />
+        <PhoneBooking />
       </main>
       <Footer />
     </>

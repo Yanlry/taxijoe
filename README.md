@@ -28,7 +28,7 @@ Tout se trouve dans **`src/config/business.ts`** :
 
 | À modifier | Champ |
 | --- | --- |
-| Téléphone, e-mail, ville | `phone`, `email`, `CITY` (en haut du fichier) |
+| Téléphone, ville | `phone`, `CITY` (en haut du fichier) |
 | Adresse (vide = rue non affichée) | `streetAddress`, `postalCode` |
 | Numéro de licence, SIRET | `licenseNumber`, `siret` |
 | Mention « Taxi conventionné CPAM » | `isCpamApproved: true` |
@@ -37,7 +37,7 @@ Tout se trouve dans **`src/config/business.ts`** :
 | Cartes de services (titres, textes) | `services` |
 | Adresse du site, une fois en ligne | `siteUrl` (ex. `https://taxi-joe.fr`) |
 
-Les valeurs encore à remplacer sont entre crochets : `[VOTRE E-MAIL]` et `[À COMPLÉTER]` (numéro de licence).
+Les valeurs encore à remplacer sont entre crochets : `[À COMPLÉTER]` (numéro de licence).
 Le titre de la page, la description Google, les aperçus de liens (Open Graph) et les données structurées
 se mettent à jour automatiquement à partir de ce fichier.
 
@@ -47,7 +47,8 @@ se mettent à jour automatiquement à partir de ce fichier.
 - **Logo** : `public/logo-taxi-joe.png` (original, utilisé pour les aperçus de liens) et
   `public/logo-taxi-joe-web.png` (version recadrée et allégée affichée sur le site).
 
-Le formulaire de réservation ouvre la messagerie du visiteur avec un e-mail pré-rempli adressé à `email`.
+Les réservations se font par téléphone : la section « Réservez votre taxi par téléphone » affiche `phone` en grand,
+avec un bouton d’appel direct (lien `tel:`).
 
 ## Mettre en ligne gratuitement
 

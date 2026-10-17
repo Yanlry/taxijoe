@@ -26,7 +26,7 @@ const getPageTitle = (b: BusinessConfig): string => `Joe le taxi, il va partout 
 const getPageDescription = (b: BusinessConfig): string =>
   `${b.name}, votre taxi à ${b.city} 7 jours sur 7, jour et nuit sur réservation : ` +
   'gares et aéroports, transport médical, soirées et longues distances. ' +
-  'Estimez le prix de votre course et réservez en ligne.';
+  'Estimez le prix de votre course et réservez par téléphone.';
 
 /** Données structurées schema.org de type TaxiService. */
 function buildJsonLd(b: BusinessConfig, services: readonly ServiceItem[]): Record<string, unknown> {
@@ -61,7 +61,6 @@ function buildJsonLd(b: BusinessConfig, services: readonly ServiceItem[]): Recor
       name: b.name,
       url,
       telephone,
-      email: filled(b.email),
       image: toAbsoluteUrl(b.siteUrl, b.ogImage.src),
       address: {
         '@type': 'PostalAddress',

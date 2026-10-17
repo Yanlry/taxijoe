@@ -73,18 +73,3 @@ export interface FareEstimate {
   perKm: number;
   total: number;
 }
-
-/** Champs du formulaire de réservation (valeurs brutes des inputs). */
-export interface BookingFormValues {
-  name: string;
-  phone: string;
-  from: string;
-  to: string;
-  date: string;
-  time: string;
-  passengers: string;
-}
-
-export type BookingField = keyof BookingFormValues;
-
-export type BookingFormErrors = Partial<Record<BookingField, string>>;

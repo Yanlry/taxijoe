@@ -10,12 +10,10 @@
   --color-text-muted: #cfcabd;
   --color-ink: #0d0d0d;
   --color-border: #2a2a2a;
-  --color-field-border: #737373;
   --color-meter-case: #050505;
   --color-amber: #ffb800;
   --color-available: #3ddc84;
   --color-busy: #ff9f1c;
-  --color-error: #ff8a80;
 
   /* Typographies */
   --font-display: 'Archivo Black', 'Arial Black', Impact, sans-serif;
