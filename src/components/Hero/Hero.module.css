@@ -1,0 +1,141 @@
+.hero {
+  position: relative;
+  padding-block: clamp(40px, 7vw, 96px) clamp(56px, 8vw, 112px);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(55% 55% at 78% 45%, rgb(255 210 31 / 0.07), transparent 70%);
+  pointer-events: none;
+}
+
+.grid {
+  position: relative;
+  display: grid;
+  gap: clamp(40px, 6vw, 72px);
+  align-items: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.title {
+  font-size: clamp(44px, 6vw, 80px);
+  line-height: 0.98;
+}
+
+.title > span {
+  display: block;
+}
+
+/* « pas » barré d'une croix jaune, dont les deux traits se dessinent au chargement. */
+.struck {
+  position: relative;
+  display: inline-block;
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.struck::before,
+.struck::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -0.1em;
+  left: -0.1em;
+  height: 0.14em;
+  margin-top: -0.07em;
+  border-radius: var(--radius-pill);
+  background: var(--color-yellow);
+  box-shadow: 0 0 0 0.045em var(--color-bg);
+  animation: 0.4s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+/*
+ * Chaque trait pivote autour d'une extrémité pour se dessiner comme au stylo.
+ * translateY(0.24em) le recentre sur le mot : demi-largeur de « pas » (≈ 1,17em) × sin(12°).
+ */
+
+/* Premier trait « / », tracé depuis la gauche. */
+.struck::before {
+  transform: translateY(0.24em) rotate(-12deg);
+  transform-origin: left center;
+  animation-name: strike-up;
+  animation-delay: 0.5s;
+}
+
+/* Second trait « \ », tracé depuis la droite juste après. */
+.struck::after {
+  transform: translateY(0.24em) rotate(12deg);
+  transform-origin: right center;
+  animation-name: strike-down;
+  animation-delay: 0.85s;
+}
+
+@keyframes strike-up {
+  from {
+    transform: translateY(0.24em) rotate(-12deg) scaleX(0);
+  }
+}
+
+@keyframes strike-down {
+  from {
+    transform: translateY(0.24em) rotate(12deg) scaleX(0);
+  }
+}
+
+.lead {
+  max-width: 36rem;
+  color: var(--color-text-muted);
+  font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+
+.actions > a {
+  flex: 1 1 100%;
+}
+
+@media (min-width: 480px) {
+  .actions > a {
+    flex: 0 0 auto;
+  }
+}
+
+/* Colonne de texte assez large pour garder chaque ligne du titre entière. */
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .struck::before,
+  .struck::after {
+    animation: none;
+  }
+}
+
+/* Mode contraste élevé : la croix dessinée disparaît, on revient au barré natif. */
+@media (forced-colors: active) {
+  .struck {
+    text-decoration: line-through;
+  }
+
+  .struck::before,
+  .struck::after {
+    display: none;
+  }
+}

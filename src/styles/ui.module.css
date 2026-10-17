@@ -1,0 +1,98 @@
+/* Éléments d'interface partagés : boutons pilule et en-têtes de section. */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 26px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  font: 700 1rem/1.15 var(--font-body);
+  letter-spacing: 0.01em;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button svg {
+  flex-shrink: 0;
+}
+
+/* Jaune plein, texte noir */
+.primary {
+  composes: button;
+  background: var(--color-yellow);
+  color: var(--color-ink);
+}
+
+.primary:hover {
+  background: var(--color-yellow-hover);
+}
+
+/* Contour clair, sur fond sombre */
+.outline {
+  composes: button;
+  border-color: rgb(245 242 232 / 0.72);
+  background: transparent;
+  color: var(--color-text);
+}
+
+.outline:hover {
+  border-color: var(--color-yellow);
+  color: var(--color-yellow);
+}
+
+/* Contour noir, sur fond jaune */
+.outlineDark {
+  composes: button;
+  border-color: var(--color-ink);
+  background: transparent;
+  color: var(--color-ink);
+}
+
+.outlineDark:hover {
+  background: var(--color-ink);
+  color: var(--color-yellow);
+}
+
+.outlineDark:focus-visible {
+  outline-color: var(--color-ink);
+}
+
+/* Variante compacte (garde 48px de haut) */
+.compact {
+  padding-inline: 20px;
+  font-size: 0.9375rem;
+}
+
+.eyebrow {
+  margin-bottom: 16px;
+  color: var(--color-yellow);
+  font: 700 0.875rem/1.2 var(--font-body);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.sectionTitle {
+  font-size: clamp(34px, 5vw, 60px);
+}
+
+.sectionTitle > span {
+  display: block;
+}
+
+/* Mots mis en avant en jaune dans les titres */
+.accent {
+  color: var(--color-yellow);
+}

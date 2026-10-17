@@ -1,0 +1,5 @@
+.band {
+  flex-shrink: 0;
+  height: var(--checker-size, 24px);
+  background: var(--checker) 0 0 / var(--checker-size, 24px) var(--checker-size, 24px);
+}

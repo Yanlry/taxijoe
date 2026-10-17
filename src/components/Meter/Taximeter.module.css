@@ -1,0 +1,124 @@
+/* Boîtier du taximètre : conteneur de référence pour la taille des chiffres (unités cqi). */
+.meter {
+  container-type: inline-size;
+  padding: clamp(16px, 3vw, 28px);
+  border: 1px solid #272727;
+  border-radius: var(--radius-panel);
+  background: linear-gradient(180deg, #0e0e0e 0%, var(--color-meter-case) 45%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    inset 0 -2px 0 rgb(0 0 0 / 0.6),
+    0 0 0 6px #0a0a0a,
+    0 0 0 7px #2a2a2a,
+    0 40px 80px -30px rgb(0 0 0 / 0.9);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 12px;
+}
+
+.brand {
+  color: var(--color-text-muted);
+  font: 600 0.8125rem / 1.2 var(--font-body);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-yellow);
+  color: var(--color-ink);
+  font: 700 0.75rem / 1 var(--font-body);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.badgeNight {
+  background: transparent;
+  color: var(--color-amber);
+  box-shadow: inset 0 0 0 1.5px var(--color-amber);
+}
+
+/* Afficheur ambré */
+.screen {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-block: 18px 16px;
+  padding: clamp(14px, 3vw, 24px) clamp(16px, 3vw, 26px);
+  overflow: hidden;
+  border-radius: 16px;
+  background: radial-gradient(120% 160% at 50% 0%, #1c1300 0%, #0b0800 55%, #060400 100%);
+  box-shadow:
+    inset 0 3px 14px rgb(0 0 0 / 0.9),
+    inset 0 0 0 1px rgb(255 184 0 / 0.14);
+}
+
+.readout {
+  position: relative;
+  font: 400 clamp(44px, 22cqi, 108px) / 1 var(--font-mono);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Segments éteints en arrière-plan, comme sur un vrai afficheur */
+.ghost {
+  color: rgb(255 184 0 / 0.07);
+}
+
+.digits {
+  position: absolute;
+  inset: 0;
+  color: var(--color-amber);
+  text-shadow:
+    0 0 4px rgb(255 184 0 / 0.55),
+    0 0 18px rgb(255 184 0 / 0.35);
+}
+
+.currency {
+  color: var(--color-amber);
+  font: 400 clamp(24px, 9cqi, 44px) / 1 var(--font-mono);
+  text-shadow: 0 0 10px rgb(255 184 0 / 0.4);
+}
+
+/* Détail : prise en charge, prix au km, distance */
+.details {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #262626;
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  background: #0b0b0b;
+}
+
+.detail dt {
+  color: var(--color-text-muted);
+  font: 600 0.6875rem / 1.25 var(--font-body);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.detail dd {
+  color: var(--color-text);
+  font: 400 clamp(1rem, 2.4vw, 1.25rem) / 1.1 var(--font-mono);
+  white-space: nowrap;
+}

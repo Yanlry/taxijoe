@@ -1,0 +1,30 @@
+/*
+ * --logo-glow est déclarée avec @property (styles/global.css) : le navigateur peut
+ * l'interpoler, ce qui fait pulser le halo sans animer l'image elle-même.
+ */
+.logo {
+  --logo-glow: 1;
+  width: 100%;
+  max-width: 460px;
+  margin-inline: auto;
+  filter: drop-shadow(0 0 28px rgb(255 210 31 / calc(0.55 * var(--logo-glow))))
+    drop-shadow(0 0 80px rgb(255 210 31 / calc(0.3 * var(--logo-glow))));
+  animation: halo 3.6s ease-in-out infinite;
+}
+
+@keyframes halo {
+  0%,
+  100% {
+    --logo-glow: 1;
+  }
+
+  50% {
+    --logo-glow: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo {
+    animation: none;
+  }
+}
