@@ -36,9 +36,11 @@
   flex-basis: 100%;
 }
 
+/* Liens calés à droite, y compris sur mobile où ils passent sur leur propre ligne. */
 .links {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 0 24px;
 }
 

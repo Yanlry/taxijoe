@@ -64,7 +64,7 @@
   width: 30px;
   height: 30px;
   margin-top: -10px;
-  border: 5px solid var(--color-surface);
+  border: 5px solid var(--range-gap, var(--color-surface));
   border-radius: 50%;
   background: var(--color-yellow);
   box-shadow:
@@ -89,7 +89,7 @@
 .range::-moz-range-thumb {
   width: 20px;
   height: 20px;
-  border: 5px solid var(--color-surface);
+  border: 5px solid var(--range-gap, var(--color-surface));
   border-radius: 50%;
   background: var(--color-yellow);
   box-shadow: 0 0 0 2px var(--color-yellow);

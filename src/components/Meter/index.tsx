@@ -2,6 +2,7 @@ import { useCallback, useState, type ChangeEvent, type CSSProperties } from 'rea
 import { ArrowLeftRight, ArrowRight, Moon, Sun } from 'lucide-react';
 import { fares, meterSettings } from '../../config/business';
 import { useFareEstimate } from '../../hooks/useFareEstimate';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import ui from '../../styles/ui.module.css';
 import { cx } from '../../utils/cx';
 import { formatEuros } from '../../utils/format';
@@ -10,16 +11,62 @@ import { Taximeter } from './Taximeter';
 
 const { minKm, maxKm, defaultKm } = meterSettings;
 
+/** Mise en page en deux colonnes (même seuil que .grid dans Meter.module.css). */
+const TWO_COLUMNS = '(min-width: 960px)';
+
+interface DistanceFieldProps {
+  km: number;
+  isRoundTrip: boolean;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+}
+
+/** Curseur de distance du trajet, avec la valeur choisie et les bornes. */
+function DistanceField({ km, isRoundTrip, onChange }: DistanceFieldProps) {
+  const rangeStyle = { '--progress': `${((km - minKm) / (maxKm - minKm)) * 100}%` } as CSSProperties;
+
+  return (
+    <div className={styles.field}>
+      <div className={styles.fieldHead}>
+        <label htmlFor="distance" className={styles.label}>
+          {isRoundTrip ? 'Distance totale (aller + retour)' : 'Distance du trajet'}
+        </label>
+        <span aria-hidden="true" className={styles.kmValue}>
+          {km}&nbsp;km
+        </span>
+      </div>
+      <input
+        id="distance"
+        type="range"
+        min={minKm}
+        max={maxKm}
+        step={1}
+        value={km}
+        onChange={onChange}
+        aria-valuetext={`${km} kilomètre${km > 1 ? 's' : ''}`}
+        className={styles.range}
+        style={rangeStyle}
+      />
+      <div aria-hidden="true" className={styles.scale}>
+        <span>{minKm}&nbsp;km</span>
+        <span>{maxKm}&nbsp;km</span>
+      </div>
+    </div>
+  );
+}
+
 /**
  * Section « Le compteur de Joe » : curseur de distance, choix du moment (jour ou nuit)
  * et du trajet (aller simple ou aller-retour), qui déterminent le tarif réglementé A, B, C ou D,
  * et taximètre qui affiche l'estimation en direct (calcul dans useFareEstimate).
+ * Sur une colonne (téléphone, tablette), le curseur passe en haut du taximètre :
+ * le montant reste visible pendant qu'on fait glisser la distance.
  */
 export function Meter() {
   const [km, setKm] = useState(defaultKm);
   const [isNight, setIsNight] = useState(false);
   const [isRoundTrip, setIsRoundTrip] = useState(false);
   const estimate = useFareEstimate(km, isNight, isRoundTrip);
+  const isTwoColumns = useMediaQuery(TWO_COLUMNS);
 
   const handleDistanceChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setKm(Number(event.target.value));
@@ -29,7 +76,8 @@ export function Meter() {
   const selectOneWay = useCallback(() => setIsRoundTrip(false), []);
   const selectRoundTrip = useCallback(() => setIsRoundTrip(true), []);
 
-  const rangeStyle = { '--progress': `${((km - minKm) / (maxKm - minKm)) * 100}%` } as CSSProperties;
+  // Un seul curseur dans la page : dans la colonne de gauche, ou en haut du taximètre.
+  const distanceField = <DistanceField km={km} isRoundTrip={isRoundTrip} onChange={handleDistanceChange} />;
 
   return (
     <section id="compteur" aria-labelledby="compteur-title" className={styles.section}>
@@ -47,32 +95,7 @@ export function Meter() {
             </h2>
           </div>
 
-          <div className={styles.field}>
-            <div className={styles.fieldHead}>
-              <label htmlFor="distance" className={styles.label}>
-                {isRoundTrip ? 'Distance totale (aller + retour)' : 'Distance du trajet'}
-              </label>
-              <span aria-hidden="true" className={styles.kmValue}>
-                {km}&nbsp;km
-              </span>
-            </div>
-            <input
-              id="distance"
-              type="range"
-              min={minKm}
-              max={maxKm}
-              step={1}
-              value={km}
-              onChange={handleDistanceChange}
-              aria-valuetext={`${km} kilomètre${km > 1 ? 's' : ''}`}
-              className={styles.range}
-              style={rangeStyle}
-            />
-            <div aria-hidden="true" className={styles.scale}>
-              <span>{minKm}&nbsp;km</span>
-              <span>{maxKm}&nbsp;km</span>
-            </div>
-          </div>
+          {isTwoColumns && distanceField}
 
           <fieldset aria-describedby="tarif-hint" className={styles.fieldset}>
             <legend className={cx(styles.label, styles.legend)}>Tarif</legend>
@@ -110,7 +133,7 @@ export function Meter() {
         </div>
 
         <div className={styles.meterColumn}>
-          <Taximeter estimate={estimate} />
+          <Taximeter estimate={estimate} controls={isTwoColumns ? undefined : distanceField} />
           <p className={styles.disclaimer}>
             Estimation au tarif maximum réglementé ({fares.source}). Hors attente ou marche lente (
             {formatEuros(fares.attenteHeureJour)}/h le jour, {formatEuros(fares.attenteHeureNuit)}/h la nuit) et

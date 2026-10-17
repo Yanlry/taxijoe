@@ -13,6 +13,15 @@
     0 40px 80px -30px rgb(0 0 0 / 0.9);
 }
 
+/* Curseur de distance intégré en haut du boîtier, séparé de l'afficheur par un filet. */
+.controls {
+  /* Anneau autour du bouton du curseur : couleur du boîtier. */
+  --range-gap: #0d0d0d;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #262626;
+}
+
 .head {
   display: flex;
   flex-wrap: wrap;

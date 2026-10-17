@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, type ReactNode } from 'react';
 import { useAnimatedNumber } from '../../hooks/useAnimatedNumber';
 import type { FareEstimate } from '../../types';
 import { cx } from '../../utils/cx';
@@ -7,6 +7,8 @@ import styles from './Taximeter.module.css';
 
 interface TaximeterProps {
   estimate: FareEstimate;
+  /** Réglages affichés tout en haut du boîtier (le curseur de distance sur téléphone). */
+  controls?: ReactNode;
 }
 
 /**
@@ -16,13 +18,15 @@ interface TaximeterProps {
  * Le montant défile de l'ancienne valeur vers la nouvelle ; les lecteurs d'écran
  * n'entendent que le montant final, via une zone live discrète.
  */
-export const Taximeter = memo(function Taximeter({ estimate }: TaximeterProps) {
+export const Taximeter = memo(function Taximeter({ estimate, controls }: TaximeterProps) {
   const displayed = useAnimatedNumber(estimate.total);
   const tariffLabel = `Tarif ${estimate.tariff} · ${estimate.isNight ? 'nuit' : 'jour'}`;
   const tripLabel = estimate.isRoundTrip ? 'aller-retour' : 'aller simple';
 
   return (
     <div className={styles.meter}>
+      {controls && <div className={styles.controls}>{controls}</div>}
+
       <div className={styles.head}>
         <span className={styles.brand}>Taxi Joe · Estimation</span>
         <span className={cx(styles.badge, estimate.isNight && styles.badgeNight)}>{tariffLabel}</span>
