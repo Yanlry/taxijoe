@@ -34,7 +34,7 @@
   display: block;
 }
 
-/* « pas » barré d'une croix jaune, dont les deux traits se dessinent au chargement. */
+/* « pas » barré d'une croix jaune, dont les deux traits se dessinent en boucle. */
 .struck {
   position: relative;
   display: inline-block;
@@ -54,39 +54,71 @@
   border-radius: var(--radius-pill);
   background: var(--color-yellow);
   box-shadow: 0 0 0 0.045em var(--color-bg);
-  animation: 0.4s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
 /*
  * Chaque trait pivote autour d'une extrémité pour se dessiner comme au stylo.
  * translateY(0.24em) le recentre sur le mot : demi-largeur de « pas » (≈ 1,17em) × sin(12°).
+ *
+ * Animation écrite en entier sur chaque trait : un raccourci « animation » sans nom
+ * est réduit à « none » par la minification du build, et les traits ne se dessinaient plus.
  */
 
 /* Premier trait « / », tracé depuis la gauche. */
 .struck::before {
   transform: translateY(0.24em) rotate(-12deg);
   transform-origin: left center;
-  animation-name: strike-up;
-  animation-delay: 0.5s;
+  animation: strike-up 4.5s cubic-bezier(0.65, 0, 0.35, 1) 0.5s infinite both;
 }
 
 /* Second trait « \ », tracé depuis la droite juste après. */
 .struck::after {
   transform: translateY(0.24em) rotate(12deg);
   transform-origin: right center;
-  animation-name: strike-down;
-  animation-delay: 0.85s;
+  animation: strike-down 4.5s cubic-bezier(0.65, 0, 0.35, 1) 0.5s infinite both;
 }
 
+/*
+ * Cycle de 4,5 s, identique pour les deux traits pour qu'ils restent synchronisés :
+ * « / » se trace (0-10 %), puis « \ » (10-20 %), la croix reste affichée,
+ * s'efface en fondu (76-86 %) et « pas » reste seul un instant avant le cycle suivant.
+ */
 @keyframes strike-up {
-  from {
+  0% {
+    opacity: 1;
     transform: translateY(0.24em) rotate(-12deg) scaleX(0);
+  }
+
+  10%,
+  76% {
+    opacity: 1;
+    transform: translateY(0.24em) rotate(-12deg) scaleX(1);
+  }
+
+  86%,
+  100% {
+    opacity: 0;
+    transform: translateY(0.24em) rotate(-12deg) scaleX(1);
   }
 }
 
 @keyframes strike-down {
-  from {
+  0%,
+  10% {
+    opacity: 1;
     transform: translateY(0.24em) rotate(12deg) scaleX(0);
+  }
+
+  20%,
+  76% {
+    opacity: 1;
+    transform: translateY(0.24em) rotate(12deg) scaleX(1);
+  }
+
+  86%,
+  100% {
+    opacity: 0;
+    transform: translateY(0.24em) rotate(12deg) scaleX(1);
   }
 }
 
