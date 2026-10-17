@@ -33,7 +33,7 @@ Tout se trouve dans **`src/config/business.ts`** :
 | Numéro de licence, SIRET | `licenseNumber`, `siret` |
 | Mention « Taxi conventionné CPAM » | `isCpamApproved: true` |
 | Horaires du pied de page | `hours` |
-| **Tarifs** (prise en charge, prix au km jour / nuit) | `fares` |
+| **Tarifs réglementés** (arrêté préfectoral : prise en charge, tarifs A à D, minimum, attente, suppléments) | `fares` |
 | Cartes de services (titres, textes) | `services` |
 | Adresse du site, une fois en ligne | `siteUrl` (ex. `https://taxi-joe.fr`) |
 

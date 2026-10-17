@@ -39,11 +39,31 @@ export interface BusinessConfig {
   ogImage: ImageAsset;
 }
 
-/** Tarifs du taxi, en euros TTC. */
+/**
+ * Tarifs kilométriques réglementés :
+ * A = jour, aller-retour avec le client ; B = nuit, dimanche ou férié, aller-retour avec le client ;
+ * C = jour, aller simple (retour à vide) ; D = nuit, dimanche ou férié, aller simple (retour à vide).
+ */
+export type TariffCode = 'A' | 'B' | 'C' | 'D';
+
+/** Tarifs maxima du taxi fixés par arrêté préfectoral, en euros TTC. */
 export interface FareConfig {
+  /** Référence de l'arrêté, affichée sous le compteur. */
+  source: string;
   priseEnCharge: number;
-  prixKmJour: number;
-  prixKmNuit: number;
+  /** Valeur d'une chute : le compteur avance par pas de ce montant. */
+  chute: number;
+  /** Prix au kilomètre de chaque tarif. */
+  prixKm: Record<TariffCode, number>;
+  /** Prix minimum d'une course, suppléments inclus. */
+  courseMinimum: number;
+  /** Attente ou marche lente, prix de l'heure (jour 7h-19h / nuit 19h-7h). */
+  attenteHeureJour: number;
+  attenteHeureNuit: number;
+  /** Par bagage hors coffre ou au-delà de trois valises. */
+  supplementBagage: number;
+  /** Par passager à partir du 5e. */
+  supplementPassager: number;
 }
 
 /** Réglages du curseur de distance du compteur. */
@@ -69,7 +89,13 @@ export interface ServiceItem {
 export interface FareEstimate {
   km: number;
   isNight: boolean;
+  isRoundTrip: boolean;
+  tariff: TariffCode;
   base: number;
   perKm: number;
   total: number;
+  /** Course minimum réglementaire. */
+  minimum: number;
+  /** true si le montant au compteur était inférieur à la course minimum, appliquée à la place. */
+  isMinimum: boolean;
 }

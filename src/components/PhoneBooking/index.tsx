@@ -108,7 +108,7 @@ export function PhoneBooking() {
         </div>
 
         <p className={styles.lead}>
-          Une ligne directe avec votre chauffeur, sans application ni inscription. Gare, aéroport, rendez-vous
+          Une ligne directe avec votre chauffeur. Gare, aéroport, rendez-vous
           médical ou soirée&nbsp;: un appel suffit pour réserver votre course.
         </p>
 

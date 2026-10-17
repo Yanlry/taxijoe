@@ -46,16 +46,28 @@ export const business: BusinessConfig = {
 };
 
 /**
- * TARIFS : À REMPLACER PAR VOS TARIFS
+ * TARIFS RÉGLEMENTÉS : arrêté préfectoral du 2 février 2026, département du Nord
  * ----------------------------------------------------------------------------
- * Valeurs d'EXEMPLE uniquement (euros TTC). Reportez ici les tarifs réglementés
- * en vigueur dans votre département. Le compteur du site s'en sert pour estimer :
- *   prix = prise en charge + distance (km) x prix au km
+ * Tarifs maxima TTC (articles 2 et 4 de l'arrêté). À mettre à jour à chaque
+ * nouvel arrêté annuel. Le compteur du site s'en sert pour estimer :
+ *   prix = prise en charge + chutes de 0,10 € (distance x prix au km), minimum 8 €
+ * Jour = 7h-19h sauf dimanches et jours fériés ; nuit = 19h-7h, dimanches et jours fériés.
  */
 export const fares: FareConfig = {
-  priseEnCharge: 2.6, // À REMPLACER PAR VOS TARIFS
-  prixKmJour: 1.25, // À REMPLACER PAR VOS TARIFS
-  prixKmNuit: 1.85, // À REMPLACER PAR VOS TARIFS (nuit, dimanche et jours fériés)
+  source: 'arrêté préfectoral du Nord du 2 février 2026',
+  priseEnCharge: 2.8,
+  chute: 0.1,
+  prixKm: {
+    A: 1.22, // jour, aller et retour avec le client
+    B: 1.56, // nuit, dimanche et jours fériés, aller et retour avec le client
+    C: 2.44, // jour, aller simple avec retour à vide
+    D: 3.12, // nuit, dimanche et jours fériés, aller simple avec retour à vide
+  },
+  courseMinimum: 8,
+  attenteHeureJour: 26.2,
+  attenteHeureNuit: 34.1,
+  supplementBagage: 2,
+  supplementPassager: 4,
 };
 
 /** Bornes et valeur de départ du curseur de distance. */

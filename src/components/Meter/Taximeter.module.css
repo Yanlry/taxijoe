@@ -91,10 +91,10 @@
   text-shadow: 0 0 10px rgb(255 184 0 / 0.4);
 }
 
-/* Détail : prise en charge, prix au km, distance */
+/* Détail : prise en charge, prix au km, distance, minimum (2 x 2, puis sur une ligne si la place le permet) */
 .details {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
   overflow: hidden;
   border-radius: 14px;
@@ -121,4 +121,17 @@
   color: var(--color-text);
   font: 400 clamp(1rem, 2.4vw, 1.25rem) / 1.1 var(--font-mono);
   white-space: nowrap;
+  transition: color 0.25s ease;
+}
+
+/* Course minimum appliquée : la case s'allume en ambré. */
+.detailActive dt,
+.detailActive dd {
+  color: var(--color-amber);
+}
+
+@container (min-width: 520px) {
+  .details {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }

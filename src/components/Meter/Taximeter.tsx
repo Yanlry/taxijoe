@@ -11,12 +11,15 @@ interface TaximeterProps {
 
 /**
  * Taximètre : boîtier noir, afficheur ambré façon compteur et détail du calcul.
+ * Le badge indique le tarif réglementé appliqué (A à D) ; la case « Minimum » s'allume
+ * quand la course minimum remplace le montant au compteur.
  * Le montant défile de l'ancienne valeur vers la nouvelle ; les lecteurs d'écran
  * n'entendent que le montant final, via une zone live discrète.
  */
 export const Taximeter = memo(function Taximeter({ estimate }: TaximeterProps) {
   const displayed = useAnimatedNumber(estimate.total);
-  const tariffLabel = estimate.isNight ? 'Tarif nuit' : 'Tarif jour';
+  const tariffLabel = `Tarif ${estimate.tariff} · ${estimate.isNight ? 'nuit' : 'jour'}`;
+  const tripLabel = estimate.isRoundTrip ? 'aller-retour' : 'aller simple';
 
   return (
     <div className={styles.meter}>
@@ -34,7 +37,7 @@ export const Taximeter = memo(function Taximeter({ estimate }: TaximeterProps) {
           €
         </span>
         <p className="visually-hidden" aria-live="polite" aria-atomic="true">
-          {`Estimation : ${formatEuros(estimate.total)}, ${tariffLabel.toLowerCase()}`}
+          {`Estimation : ${formatEuros(estimate.total)}${estimate.isMinimum ? ' (course minimum)' : ''}, tarif ${estimate.tariff}, ${estimate.isNight ? 'nuit' : 'jour'}, ${tripLabel}`}
         </p>
       </div>
 
@@ -50,6 +53,10 @@ export const Taximeter = memo(function Taximeter({ estimate }: TaximeterProps) {
         <div className={styles.detail}>
           <dt>Distance</dt>
           <dd>{estimate.km}&nbsp;km</dd>
+        </div>
+        <div className={cx(styles.detail, estimate.isMinimum && styles.detailActive)}>
+          <dt>Minimum</dt>
+          <dd>{formatEuros(estimate.minimum)}</dd>
         </div>
       </dl>
     </div>
