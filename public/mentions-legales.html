@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
     <meta name="theme-color" content="#0D0D0D" />
-    <title>Mentions légales — Taxi Joe</title>
+    <title>Mentions légales et confidentialité — Taxi Joe</title>
+    <meta name="description" content="Mentions légales, hébergement, données personnelles et réclamations du site Taxi Joe, taxi à Lys-lez-Lannoy." />
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
     <style>
       :root { color-scheme: dark; }
@@ -21,12 +22,18 @@
         background: repeating-conic-gradient(#ffd21f 0 25%, #0d0d0d 0 50%) 0 0 / 24px 24px;
       }
       main { max-width: 760px; margin: 0 auto; padding: 48px 20px 80px; }
-      h1 { margin: 0 0 32px; font-size: clamp(32px, 6vw, 48px); line-height: 1.05; text-transform: uppercase; }
-      h2 { margin: 40px 0 12px; color: #ffd21f; font-size: 1rem; letter-spacing: 0.12em; text-transform: uppercase; }
-      p { margin: 0 0 12px; color: #cfcabd; }
+      h1 { margin: 0 0 12px; font-size: clamp(32px, 6vw, 48px); line-height: 1.05; text-transform: uppercase; }
+      h2 { margin: 44px 0 12px; color: #ffd21f; font-size: 1rem; letter-spacing: 0.12em; text-transform: uppercase; }
+      h3 { margin: 24px 0 8px; color: #f5f2e8; font-size: 1.0625rem; }
+      p, li { color: #cfcabd; }
+      p { margin: 0 0 12px; }
+      ul { margin: 0 0 12px; padding-left: 1.25em; }
+      li { margin-bottom: 4px; }
+      address { font-style: normal; }
       strong { color: #f5f2e8; }
-      a { color: #ffd21f; text-underline-offset: 4px; }
+      a { color: #ffd21f; text-underline-offset: 4px; overflow-wrap: anywhere; }
       a:focus-visible { outline: 3px solid #ffd21f; outline-offset: 3px; }
+      .updated { margin-bottom: 8px; font-size: 0.9375rem; }
       .back {
         display: inline-flex; align-items: center; min-height: 48px; margin-bottom: 32px;
         padding: 12px 24px; border: 2px solid rgb(245 242 232 / 0.72); border-radius: 999px;
@@ -40,33 +47,144 @@
     <main>
       <a class="back" href="/">← Retour au site</a>
       <h1>Mentions légales</h1>
+      <p class="updated">Dernière mise à jour : 18 octobre 2026</p>
 
-      <!-- À COMPLÉTER : remplacez chaque valeur restée entre crochets par vos informations. -->
-
+      <!-- Informations prévues par l'article 6 de la loi n° 2004-575 du 21 juin 2004 (LCEN). -->
       <h2>Éditeur du site</h2>
-      <p><strong>Taxi Joe</strong> — Jonathan Dedack</p>
-      <p>Adresse : 196 rue Jean-Baptiste Lebas, 59390 Lys-lez-Lannoy</p>
-      <p>SIRET : 101 684 512 00011</p>
-      <p>Téléphone : <a href="tel:+33646563846">06 46 56 38 46</a> — E-mail : [VOTRE E-MAIL]</p>
-      <p>Licence / autorisation de stationnement n° [À COMPLÉTER]</p>
-      <p>Directeur de la publication : Jonathan Dedack</p>
+      <address>
+        <p>
+          <strong>Jonathan DEDACK, entrepreneur individuel (EI)</strong><br />
+          Nom commercial : Taxi Joe
+        </p>
+        <p>
+          Adresse : 196 rue Jean-Baptiste Lebas, 59390 Lys-lez-Lannoy<br />
+          Téléphone : <a href="tel:+33646563846">06 46 56 38 46</a>
+        </p>
+      </address>
+      <ul>
+        <li>Activité : transport de voyageurs par taxi (code APE 49.32Z)</li>
+        <li>Immatriculée au Registre national des entreprises (RNE) sous le numéro SIREN 101 684 512</li>
+        <li>SIRET : 101 684 512 00011</li>
+        <li>Autorisation de stationnement (licence de taxi) n° 3</li>
+        <li>Date de création : 1<sup>er</sup> mars 2026</li>
+        <!-- Si l'entreprise est assujettie à la TVA, ajouter ici : « N° de TVA intracommunautaire : FR… ». -->
+      </ul>
+      <p>Directeur de la publication : Jonathan DEDACK</p>
 
       <h2>Hébergement</h2>
-      <p>[NOM DE L'HÉBERGEUR], [ADRESSE DE L'HÉBERGEUR], [TÉLÉPHONE OU SITE DE L'HÉBERGEUR]</p>
+      <!-- Vercel ne publie pas de numéro de téléphone ; contact officiel : page d'aide et adresse e-mail ci-dessous. -->
+      <address>
+        <p>
+          <strong>Vercel Inc.</strong><br />
+          440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis<br />
+          Contact : <a href="https://vercel.com/help">vercel.com/help</a> ·
+          <a href="mailto:privacy@vercel.com">privacy@vercel.com</a>
+        </p>
+      </address>
+
+      <h2>Conception et réalisation</h2>
+      <address>
+        <p>
+          <strong>Lemach Labs</strong>, société par actions simplifiée unipersonnelle (SASU) au capital de 1 €<br />
+          Siège : 35 rue de l'Égalité, 59320 Haubourdin<br />
+          Immatriculée au Registre national des entreprises sous le numéro SIREN 102 607 090
+          (SIRET 102 607 090 00010)<br />
+          Président : Yann LEROY<br />
+          Téléphone : <a href="tel:+33658002707">06 58 00 27 07</a>
+        </p>
+      </address>
+
+      <h2>Tarifs et estimations</h2>
+      <p>
+        Les courses sont facturées selon les tarifs réglementés fixés par l'arrêté préfectoral du Nord du
+        2 février 2026, affichés dans le véhicule. Les montants donnés par le compteur du site sont des
+        estimations indicatives au tarif maximum : seul fait foi le montant affiché au taximètre à la fin de
+        la course. Quel que soit ce montant, la somme perçue ne peut être inférieure à 8 €.
+      </p>
+      <p>
+        Une note est remise pour toute course d'un montant égal ou supérieur à 25 € TTC, et sur simple
+        demande en dessous de ce montant.
+      </p>
+
+      <h2>Réclamations et médiation</h2>
+      <p>
+        Pour toute réclamation, contactez d'abord Taxi Joe au <a href="tel:+33646563846">06 46 56 38 46</a>
+        ou par courrier à l'adresse ci-dessus. Une réclamation peut également être adressée à la Direction
+        départementale de la protection des populations (DDPP) du Nord, Cité Marianne, 2 boulevard de
+        Strasbourg, 59000 Lille.
+      </p>
+      <!--
+        Médiation de la consommation (articles L.612-1 et L.616-1 du code de la consommation) : obligatoire.
+        Une fois l'adhésion à un médiateur faite, remplacer les crochets et retirer ce commentaire :
+      <p>
+        En cas de litige non résolu, vous pouvez recourir gratuitement au médiateur de la consommation :
+        [NOM DU MÉDIATEUR], [ADRESSE POSTALE], [SITE INTERNET].
+      </p>
+      -->
 
       <h2>Données personnelles</h2>
       <p>
-        Le site n'enregistre aucune donnée et ne comporte aucun formulaire : les réservations se font
-        uniquement par téléphone. Les informations que vous nous communiquez lors de l'appel (nom, téléphone,
-        trajet) servent uniquement à organiser votre course.
+        Le responsable du traitement est Jonathan DEDACK (Taxi Joe), joignable aux coordonnées indiquées
+        ci-dessus.
       </p>
+
+      <h3>Sur le site</h3>
       <p>
-        Pour toute question ou demande de suppression de vos données : [VOTRE E-MAIL].
-        [À COMPLÉTER : durée de conservation, autres traitements éventuels.]
+        Le site ne comporte aucun formulaire, ne dépose aucun cookie et n'utilise aucun outil de mesure
+        d'audience. L'éditeur ne collecte aucune donnée par son intermédiaire.
+      </p>
+      <ul>
+        <li>
+          L'hébergeur, Vercel Inc., enregistre des données techniques de connexion (adresse IP, date et
+          heure, page consultée) nécessaires au fonctionnement et à la sécurité du site. Vercel étant établie
+          aux États-Unis, ces données peuvent y être traitées dans le cadre des garanties décrites dans sa
+          <a href="https://vercel.com/legal/privacy-policy">politique de confidentialité</a>.
+        </li>
+        <li>
+          Les polices de caractères sont chargées depuis les serveurs de Google (Google Fonts), qui reçoivent
+          à cette occasion l'adresse IP de votre appareil. Voir les
+          <a href="https://policies.google.com/privacy?hl=fr">règles de confidentialité de Google</a>.
+        </li>
+      </ul>
+
+      <h3>Lors de votre réservation par téléphone</h3>
+      <ul>
+        <li>
+          Données traitées : nom, numéro de téléphone, adresses de départ et d'arrivée, date et heure de la
+          course.
+        </li>
+        <li>
+          Finalité et base légale : organiser et réaliser votre course (exécution du contrat de transport),
+          et respecter les obligations réglementaires liées aux notes de course.
+        </li>
+        <li>
+          Destinataire : Taxi Joe uniquement. Vos données ne sont ni vendues ni transmises à des tiers, sauf
+          obligation légale.
+        </li>
+        <li>
+          Durée de conservation : le temps nécessaire à l'organisation de la course ; jusqu'à 3 ans après
+          votre dernière course si vous êtes un client régulier, sauf opposition de votre part. Les doubles
+          des notes de course sont conservés deux ans, comme le prévoit l'arrêté préfectoral.
+        </li>
+      </ul>
+
+      <h3>Vos droits</h3>
+      <p>
+        Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de
+        portabilité de vos données. Pour les exercer, contactez Taxi Joe par téléphone ou par courrier aux
+        coordonnées ci-dessus. Si vous estimez, après nous avoir contactés, que vos droits ne sont pas
+        respectés, vous pouvez adresser une réclamation à la CNIL (<a href="https://www.cnil.fr">cnil.fr</a>).
       </p>
 
       <h2>Propriété intellectuelle</h2>
-      <p>Le logo et les contenus de ce site sont la propriété de Taxi Joe. Toute reproduction sans autorisation est interdite.</p>
+      <p>
+        Le logo, les textes et les visuels de ce site sont la propriété de l'éditeur. Toute reproduction ou
+        réutilisation, totale ou partielle, sans autorisation écrite est interdite.
+      </p>
+      <p>
+        Crédits : icônes <a href="https://lucide.dev">Lucide</a> (licence ISC) ; polices Archivo Black,
+        Barlow et Share Tech Mono (licence SIL Open Font License).
+      </p>
     </main>
   </body>
 </html>

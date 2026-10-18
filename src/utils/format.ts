@@ -6,6 +6,11 @@ const euroFormatter = new Intl.NumberFormat('fr-FR', {
 /** Montant en euros au format français : 2,60 €. */
 export const formatEuros = (value: number): string => euroFormatter.format(value);
 
+const kmFormatter = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 });
+
+/** Distance au format français, sans unité : 1.5 -> « 1,5 ». */
+export const formatKm = (km: number): string => kmFormatter.format(km);
+
 /**
  * Chiffres de l'afficheur du taximètre : 6 caractères, zéros devant, virgule française.
  * Ex. 17.6 -> « 017,60 ».

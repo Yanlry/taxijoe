@@ -22,10 +22,13 @@ export interface BusinessConfig {
   city: string;
   /** Zone desservie, affichée dans le pied de page. */
   serviceArea: string;
+  /** Numéro de licence (autorisation de stationnement, ADS). */
   licenseNumber: string;
   siret: string;
   /** Si true : mention « Taxi conventionné CPAM » (carte Transport médical + pied de page). */
   isCpamApproved: boolean;
+  /** Places passagers du véhicule. Au-delà de 4, le supplément par passager à partir du 5e est mentionné. */
+  maxPassengers: number;
   /** Lignes affichées dans la colonne « Horaires » du pied de page. */
   hours: readonly string[];
   /** Horaires au format schema.org pour les données structurées (ex. « Mo-Su 00:00-23:59 »). */
@@ -66,11 +69,16 @@ export interface FareConfig {
   supplementPassager: number;
 }
 
-/** Réglages du curseur de distance du compteur. */
+/** Réglages du compteur du site. */
 export interface MeterConfig {
   minKm: number;
   maxKm: number;
   defaultKm: number;
+  /**
+   * Approche comptée sur réservation par téléphone : distance avant l'adresse de départ
+   * à laquelle le compteur est mis en route. 0 = pas d'approche dans l'estimation.
+   */
+  approachKm: number;
 }
 
 /** Icônes disponibles pour les cartes de service (associées à Lucide dans ServiceCard). */
@@ -87,7 +95,10 @@ export interface ServiceItem {
 
 /** Détail d'une estimation de course. */
 export interface FareEstimate {
+  /** Distance du trajet choisie par le visiteur. */
   km: number;
+  /** Distance d'approche ajoutée au compteur avant la prise en charge du client. */
+  approachKm: number;
   isNight: boolean;
   isRoundTrip: boolean;
   tariff: TariffCode;

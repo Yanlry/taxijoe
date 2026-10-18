@@ -25,13 +25,16 @@ export const business: BusinessConfig = {
   city: CITY,
   serviceArea: `${CITY} , Roubaix , Lille et ses environs`,
 
-  // À REMPLACER : numéro de licence / autorisation de stationnement
-  licenseNumber: '[À COMPLÉTER]',
+  // Numéro de licence (autorisation de stationnement).
+  licenseNumber: '3',
 
   siret: '101 684 512 00011',
 
   // Passez à true si vous êtes conventionné : la mention s'affiche automatiquement.
   isCpamApproved: false,
+
+  // Places passagers du véhicule (le supplément « à partir du 5e passager » ne s'applique pas à 4 places).
+  maxPassengers: 4,
 
   hours: ['7 jours sur 7', 'Jour et nuit, sur réservation'],
   openingHoursSchema: 'Mo-Su 00:00-23:59',
@@ -70,11 +73,14 @@ export const fares: FareConfig = {
   supplementPassager: 4,
 };
 
-/** Bornes et valeur de départ du curseur de distance. */
+/** Bornes et valeur de départ du curseur de distance, et approche comptée dans l'estimation. */
 export const meterSettings: MeterConfig = {
   minKm: 1,
   maxKm: 150,
   defaultKm: 12,
+  // Sur réservation par téléphone, Joe met le compteur en route environ 1,5 km avant l'adresse
+  // du client (l'arrêté l'autorise dès la prise de commande). Mettre 0 pour ne plus en tenir compte.
+  approachKm: 1.5,
 };
 
 /** Cartes de la section « Où Joe vous emmène » (affichées dans cet ordre). */

@@ -37,13 +37,12 @@ Tout se trouve dans **`src/config/business.ts`** :
 | Cartes de services (titres, textes) | `services` |
 | Adresse du site, une fois en ligne | `siteUrl` (ex. `https://taxi-joe.fr`) |
 
-Les valeurs encore à remplacer sont entre crochets : `[À COMPLÉTER]` (numéro de licence).
 Le titre de la page, la description Google, les aperçus de liens (Open Graph) et les données structurées
 se mettent à jour automatiquement à partir de ce fichier.
 
 À compléter aussi :
 
-- **Mentions légales** : `public/mentions-legales.html` (déjà remplies avec les infos de la fiche ; restent l'e-mail, la licence et l'hébergeur).
+- **Mentions légales** : `public/mentions-legales.html` (éditeur, hébergeur Vercel, tarifs, réclamations, données personnelles ; reste à ajouter le médiateur de la consommation, en commentaire dans le fichier).
 - **Logo** : `public/logo-taxi-joe.png` (original, utilisé pour les aperçus de liens) et
   `public/logo-taxi-joe-web.png` (version recadrée et allégée affichée sur le site).
 

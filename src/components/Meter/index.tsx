@@ -1,11 +1,11 @@
 import { useCallback, useState, type ChangeEvent, type CSSProperties } from 'react';
 import { ArrowLeftRight, ArrowRight, Moon, Sun } from 'lucide-react';
-import { fares, meterSettings } from '../../config/business';
+import { business, fares, meterSettings } from '../../config/business';
 import { useFareEstimate } from '../../hooks/useFareEstimate';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import ui from '../../styles/ui.module.css';
 import { cx } from '../../utils/cx';
-import { formatEuros } from '../../utils/format';
+import { formatEuros, formatKm } from '../../utils/format';
 import styles from './Meter.module.css';
 import { Taximeter } from './Taximeter';
 
@@ -97,6 +97,21 @@ export function Meter() {
 
           {isTwoColumns && distanceField}
 
+       
+
+          <fieldset className={styles.fieldset}>
+            <legend className={cx(styles.label, styles.legend)}>Trajet</legend>
+            <div className={styles.toggle}>
+              <button type="button" aria-pressed={!isRoundTrip} onClick={selectOneWay} className={styles.toggleButton}>
+                <ArrowRight aria-hidden="true" size={18} strokeWidth={2} />
+                Aller simple
+              </button>
+              <button type="button" aria-pressed={isRoundTrip} onClick={selectRoundTrip} className={styles.toggleButton}>
+                <ArrowLeftRight aria-hidden="true" size={18} strokeWidth={2} />
+                Aller-retour
+              </button>
+            </div>
+          </fieldset>
           <fieldset aria-describedby="tarif-hint" className={styles.fieldset}>
             <legend className={cx(styles.label, styles.legend)}>Tarif</legend>
             <div className={styles.toggle}>
@@ -113,33 +128,27 @@ export function Meter() {
               Jour&nbsp;: 7h-19h, du lundi au samedi. Nuit&nbsp;: 19h-7h, ainsi que les dimanches et jours fériés.
             </p>
           </fieldset>
-
-          <fieldset aria-describedby="trajet-hint" className={styles.fieldset}>
-            <legend className={cx(styles.label, styles.legend)}>Trajet</legend>
-            <div className={styles.toggle}>
-              <button type="button" aria-pressed={!isRoundTrip} onClick={selectOneWay} className={styles.toggleButton}>
-                <ArrowRight aria-hidden="true" size={18} strokeWidth={2} />
-                Aller simple
-              </button>
-              <button type="button" aria-pressed={isRoundTrip} onClick={selectRoundTrip} className={styles.toggleButton}>
-                <ArrowLeftRight aria-hidden="true" size={18} strokeWidth={2} />
-                Aller-retour avec Joe
-              </button>
-            </div>
-            <p id="trajet-hint" className={styles.hint}>
-              Aller simple&nbsp;: Joe repart à vide après la course. Aller-retour&nbsp;: Joe vous ramène.
-            </p>
-          </fieldset>
         </div>
 
         <div className={styles.meterColumn}>
           <Taximeter estimate={estimate} controls={isTwoColumns ? undefined : distanceField} />
           <p className={styles.disclaimer}>
-            Estimation au tarif maximum réglementé ({fares.source}). Hors attente ou marche lente (
-            {formatEuros(fares.attenteHeureJour)}/h le jour, {formatEuros(fares.attenteHeureNuit)}/h la nuit) et
-            suppléments&nbsp;: {formatEuros(fares.supplementBagage)} par bagage hors coffre ou au-delà de trois valises,{' '}
-            {formatEuros(fares.supplementPassager)} par passager à partir du 5<sup>e</sup>. Le prix final est celui
-            affiché au compteur.
+            Estimation au tarif maximum réglementé ({fares.source})
+            {meterSettings.approachKm > 0 && (
+              <>
+                , approche comprise&nbsp;: sur réservation, Joe met le compteur en route à environ{' '}
+                {formatKm(meterSettings.approachKm)}&nbsp;km de votre adresse
+              </>
+            )}
+            . Hors attente ou marche lente ({formatEuros(fares.attenteHeureJour)}/h le jour,{' '}
+            {formatEuros(fares.attenteHeureNuit)}/h la nuit) et supplément de {formatEuros(fares.supplementBagage)} par
+            bagage au-delà de trois valises
+            {business.maxPassengers > 4 && (
+              <>
+                , {formatEuros(fares.supplementPassager)} par passager à partir du 5<sup>e</sup>
+              </>
+            )}
+            . Jusqu’à {business.maxPassengers}&nbsp;passagers. Le prix final est celui affiché au compteur.
           </p>
         </div>
       </div>

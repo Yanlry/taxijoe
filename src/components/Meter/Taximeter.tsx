@@ -2,7 +2,7 @@ import { memo, type ReactNode } from 'react';
 import { useAnimatedNumber } from '../../hooks/useAnimatedNumber';
 import type { FareEstimate } from '../../types';
 import { cx } from '../../utils/cx';
-import { formatEuros, formatMeterDigits } from '../../utils/format';
+import { formatEuros, formatKm, formatMeterDigits } from '../../utils/format';
 import styles from './Taximeter.module.css';
 
 interface TaximeterProps {
@@ -41,7 +41,7 @@ export const Taximeter = memo(function Taximeter({ estimate, controls }: Taximet
           €
         </span>
         <p className="visually-hidden" aria-live="polite" aria-atomic="true">
-          {`Estimation : ${formatEuros(estimate.total)}${estimate.isMinimum ? ' (course minimum)' : ''}, tarif ${estimate.tariff}, ${estimate.isNight ? 'nuit' : 'jour'}, ${tripLabel}`}
+          {`Estimation : ${formatEuros(estimate.total)}${estimate.isMinimum ? ' (course minimum)' : ''}, tarif ${estimate.tariff}, ${estimate.isNight ? 'nuit' : 'jour'}, ${tripLabel}${estimate.approachKm > 0 ? `, approche de ${formatKm(estimate.approachKm)} km comprise` : ''}`}
         </p>
       </div>
 
@@ -55,8 +55,19 @@ export const Taximeter = memo(function Taximeter({ estimate, controls }: Taximet
           <dd>{formatEuros(estimate.perKm)}</dd>
         </div>
         <div className={styles.detail}>
-          <dt>Distance</dt>
-          <dd>{estimate.km}&nbsp;km</dd>
+          {estimate.approachKm > 0 ? (
+            <>
+              <dt>Trajet + approche</dt>
+              <dd>
+                {estimate.km}&nbsp;+&nbsp;{formatKm(estimate.approachKm)}&nbsp;km
+              </dd>
+            </>
+          ) : (
+            <>
+              <dt>Distance</dt>
+              <dd>{estimate.km}&nbsp;km</dd>
+            </>
+          )}
         </div>
         <div className={cx(styles.detail, estimate.isMinimum && styles.detailActive)}>
           <dt>Minimum</dt>
