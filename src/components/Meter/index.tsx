@@ -14,13 +14,29 @@ const { minKm, maxKm, defaultKm } = meterSettings;
 /** Mise en page en deux colonnes (même seuil que .grid dans Meter.module.css). */
 const TWO_COLUMNS = '(min-width: 960px)';
 
+/** Plan de ville stylisé du fond (repère SVG 1440 × 900) : rues et itinéraire d'une course. */
+const STREETS = [
+  'M-40 650 L420 560 L780 610 L1480 430',
+  'M-40 230 C 300 270 520 130 820 210 S 1300 310 1480 190',
+  'M330 -40 L380 940',
+  'M720 -40 L720 940',
+  'M1000 -40 L930 940',
+  'M1230 -40 L1290 940',
+  'M-40 860 L1480 770',
+];
+/**
+ * Itinéraire : remonte la rue du milieu (x = 720, toujours au centre de l'écran, entre les deux colonnes),
+ * puis rejoint l'épingle au-dessus du taximètre.
+ */
+const ROUTE = 'M720 790 L720 200 L968 262 L990 132';
+
 interface DistanceFieldProps {
   km: number;
   isRoundTrip: boolean;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-/** Curseur de distance du trajet, avec la valeur choisie et les bornes. */
+/** Curseur de distance du trajet, avec la valeur choisie, une graduation et les bornes. */
 function DistanceField({ km, isRoundTrip, onChange }: DistanceFieldProps) {
   const rangeStyle = { '--progress': `${((km - minKm) / (maxKm - minKm)) * 100}%` } as CSSProperties;
 
@@ -46,6 +62,7 @@ function DistanceField({ km, isRoundTrip, onChange }: DistanceFieldProps) {
         className={styles.range}
         style={rangeStyle}
       />
+      <div aria-hidden="true" className={styles.ruler} />
       <div aria-hidden="true" className={styles.scale}>
         <span>{minKm}&nbsp;km</span>
         <span>{maxKm}&nbsp;km</span>
@@ -55,8 +72,8 @@ function DistanceField({ km, isRoundTrip, onChange }: DistanceFieldProps) {
 }
 
 /**
- * Section « Le compteur de Joe » : curseur de distance, choix du moment (jour ou nuit)
- * et du trajet (aller simple ou aller-retour), qui déterminent le tarif réglementé A, B, C ou D,
+ * Section « Le compteur de Joe », sur fond jaune : curseur de distance, choix du trajet (aller simple
+ * ou aller-retour) et du moment (jour ou nuit), qui déterminent le tarif réglementé A, B, C ou D,
  * et taximètre qui affiche l'estimation en direct (calcul dans useFareEstimate).
  * Sur une colonne (téléphone, tablette), le curseur passe en haut du taximètre :
  * le montant reste visible pendant qu'on fait glisser la distance.
@@ -81,23 +98,32 @@ export function Meter() {
 
   return (
     <section id="compteur" aria-labelledby="compteur-title" className={styles.section}>
+      <svg aria-hidden="true" className={styles.map} viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+        {STREETS.map((street) => (
+          <path key={street} className={styles.street} d={street} />
+        ))}
+        <path className={styles.route} d={ROUTE} />
+        <circle className={styles.routeStart} cx="720" cy="790" r="11" />
+        <path
+          className={styles.routeEnd}
+          d="M990 132 C 980 116, 968 104, 968 90 A 22 22 0 1 1 1012 90 C 1012 104, 1000 116, 990 132 Z"
+        />
+        <circle className={styles.routeEndDot} cx="990" cy="90" r="8" />
+      </svg>
+
       <div className={cx('container', styles.grid)}>
         <div className={styles.controls}>
           <div>
-            <p className={ui.eyebrow}>Le compteur</p>
+            <p className={styles.eyebrow}>Le compteur</p>
             <h2 id="compteur-title" className={ui.sectionTitle}>
+              <span>Combien ça coûte&nbsp;?</span>
               <span>
-                <span className={ui.accent}></span> Combien ça coûte&nbsp;?
-              </span>
-              <span>
-              <span className={ui.accent}> Faites</span> tourner le <span className={ui.accent}>compteur.</span>
+                Faites tourner le <span className={styles.mark}>compteur.</span>
               </span>
             </h2>
           </div>
 
           {isTwoColumns && distanceField}
-
-       
 
           <fieldset className={styles.fieldset}>
             <legend className={cx(styles.label, styles.legend)}>Trajet</legend>

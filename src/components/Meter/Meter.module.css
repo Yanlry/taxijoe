@@ -1,7 +1,84 @@
+/*
+ * Section jaune. Les couleurs du curseur de distance sont des variables : version encre ici,
+ * version sombre quand le curseur est dans le boîtier du taximètre (voir .controls dans Taximeter).
+ */
 .section {
+  --field-text: var(--color-ink);
+  --field-muted: rgb(13 13 13 / 0.62);
+  --field-accent: var(--color-ink);
+  --range-fill: var(--color-ink);
+  --range-track: rgb(13 13 13 / 0.16);
+  --range-thumb: var(--color-ink);
+  --range-gap: var(--color-yellow);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding-block: var(--section-pad);
-  background: var(--color-surface);
+  background: var(--color-yellow);
+  color: var(--color-ink);
 }
+
+/* ---------- Plan de ville du fond ---------- */
+
+.map {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.street {
+  fill: none;
+  stroke: rgb(13 13 13 / 0.06);
+  stroke-width: 28;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Itinéraire en pointillés qui avance vers la destination. */
+.route {
+  fill: none;
+  stroke: rgb(13 13 13 / 0.32);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 0.1 16;
+  animation: route 1.2s linear infinite;
+}
+
+@keyframes route {
+  to {
+    stroke-dashoffset: -16.1;
+  }
+}
+
+.routeStart {
+  fill: var(--color-yellow);
+  stroke: rgb(13 13 13 / 0.4);
+  stroke-width: 6;
+}
+
+.routeEnd {
+  fill: rgb(13 13 13 / 0.45);
+}
+
+.routeEndDot {
+  fill: var(--color-yellow);
+}
+
+/* Sur une colonne, l'itinéraire passerait derrière le texte : seules les rues restent. */
+@media (max-width: 959px) {
+  .route,
+  .routeStart,
+  .routeEnd,
+  .routeEndDot {
+    display: none;
+  }
+}
+
+/* ---------- Mise en page ---------- */
 
 .grid {
   display: grid;
@@ -12,8 +89,40 @@
 .controls {
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 32px;
 }
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  font: 700 0.875rem / 1.3 var(--font-body);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: '';
+  flex-shrink: 0;
+  width: 32px;
+  height: 3px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+}
+
+/* « compteur. » en jaune sur bandeau noir légèrement incliné, comme dans la section de réservation. */
+.mark {
+  display: inline-block;
+  margin-top: 0.06em;
+  padding: 0.06em 0.2em 0.02em;
+  border-radius: 0.14em;
+  background: var(--color-ink);
+  color: var(--color-yellow);
+  transform: rotate(-2deg);
+}
+
+/* ---------- Curseur de distance ---------- */
 
 .field {
   display: grid;
@@ -28,16 +137,16 @@
 }
 
 .label {
-  color: var(--color-text);
-  font-weight: 600;
+  color: var(--field-text);
+  font-weight: 700;
 }
 
 .kmValue {
-  color: var(--color-yellow);
-  font: 400 clamp(28px, 4vw, 36px) / 1 var(--font-mono);
+  color: var(--field-accent);
+  font: 400 clamp(30px, 4.4vw, 44px) / 1 var(--font-mono);
 }
 
-/* Curseur de distance : piste remplie en jaune jusqu'à la valeur (--progress). */
+/* Piste remplie jusqu'à la valeur (--progress). */
 .range {
   --progress: 0%;
   width: 100%;
@@ -51,59 +160,90 @@
 
 .range:focus-visible {
   border-radius: 8px;
+  outline-color: var(--field-accent);
   outline-offset: 4px;
 }
 
 .range::-webkit-slider-runnable-track {
   height: 10px;
   border-radius: var(--radius-pill);
-  background: linear-gradient(to right, var(--color-yellow) var(--progress), #666 var(--progress));
+  background: linear-gradient(to right, var(--range-fill) var(--progress), var(--range-track) var(--progress));
 }
 
 .range::-webkit-slider-thumb {
   width: 30px;
   height: 30px;
   margin-top: -10px;
-  border: 5px solid var(--range-gap, var(--color-surface));
+  border: 5px solid var(--range-gap);
   border-radius: 50%;
-  background: var(--color-yellow);
+  background: var(--range-thumb);
   box-shadow:
-    0 0 0 2px var(--color-yellow),
-    0 4px 12px rgb(0 0 0 / 0.5);
+    0 0 0 2px var(--range-thumb),
+    0 6px 14px rgb(0 0 0 / 0.35);
+  transition: transform 0.15s ease;
   -webkit-appearance: none;
   appearance: none;
+}
+
+.range:active::-webkit-slider-thumb {
+  transform: scale(1.12);
 }
 
 .range::-moz-range-track {
   height: 10px;
   border-radius: var(--radius-pill);
-  background: #666;
+  background: var(--range-track);
 }
 
 .range::-moz-range-progress {
   height: 10px;
   border-radius: var(--radius-pill);
-  background: var(--color-yellow);
+  background: var(--range-fill);
 }
 
 .range::-moz-range-thumb {
   width: 20px;
   height: 20px;
-  border: 5px solid var(--range-gap, var(--color-surface));
+  border: 5px solid var(--range-gap);
   border-radius: 50%;
-  background: var(--color-yellow);
-  box-shadow: 0 0 0 2px var(--color-yellow);
+  background: var(--range-thumb);
+  box-shadow: 0 0 0 2px var(--range-thumb);
+}
+
+/* Graduation façon règle : petits traits tous les 10 km environ, grands traits aux tiers. */
+.ruler {
+  position: relative;
+  height: 10px;
+  margin: -8px 15px 0;
+  color: var(--field-muted);
+}
+
+.ruler::before,
+.ruler::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.ruler::before {
+  top: 4px;
+  background: linear-gradient(90deg, currentColor 0 1px, transparent 1px) 0 0 / calc((100% - 1px) / 15) 100% repeat-x;
+  opacity: 0.5;
+}
+
+.ruler::after {
+  background: linear-gradient(90deg, currentColor 0 2px, transparent 2px) 0 0 / calc((100% - 2px) / 3) 100% repeat-x;
 }
 
 .scale {
   display: flex;
   justify-content: space-between;
-  margin-top: -6px;
-  color: var(--color-text-muted);
-  font-size: 0.875rem;
+  color: var(--field-muted);
+  font: 400 0.875rem / 1 var(--font-mono);
 }
 
-/* Boutons à bascule Jour / Nuit */
+/* ---------- Boutons à bascule : pilule noire, option choisie en jaune ---------- */
+
 .fieldset {
   min-width: 0;
   margin: 0;
@@ -123,16 +263,9 @@
   width: fit-content;
   max-width: 100%;
   padding: 6px;
-  border: 1px solid var(--color-border);
   border-radius: 30px;
-  background: var(--color-bg);
-}
-
-.hint {
-  margin-top: 10px;
-  color: var(--color-text-muted);
-  font-size: 0.9375rem;
-  line-height: 1.45;
+  background: var(--color-ink);
+  box-shadow: 0 16px 30px -18px rgb(0 0 0 / 0.7);
 }
 
 .toggleButton {
@@ -146,12 +279,13 @@
   border: 0;
   border-radius: var(--radius-pill);
   background: transparent;
-  color: var(--color-text-muted);
+  color: rgb(245 242 232 / 0.72);
   font-weight: 600;
   cursor: pointer;
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
+    background-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .toggleButton:hover {
@@ -161,16 +295,26 @@
 .toggleButton[aria-pressed='true'] {
   background: var(--color-yellow);
   color: var(--color-ink);
+  box-shadow: 0 0 18px rgb(255 210 31 / 0.35);
 }
+
+.hint {
+  margin-top: 10px;
+  color: rgb(13 13 13 / 0.72);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+/* ---------- Taximètre et mentions ---------- */
 
 .meterColumn {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 20px;
+  gap: 24px;
 }
 
 .disclaimer {
-  color: var(--color-text-muted);
+  color: rgb(13 13 13 / 0.72);
   font-size: 0.6375rem;
 }
 
@@ -182,5 +326,36 @@
 @media (min-width: 960px) {
   .grid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  /* Plan atténué derrière la colonne de texte, plein derrière le taximètre. */
+  .map {
+    -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 0.35) 0 38%, #000 60%);
+    mask-image: linear-gradient(90deg, rgb(0 0 0 / 0.35) 0 38%, #000 60%);
+  }
+}
+
+/* Apparition au défilement, si le navigateur sait lier une animation à la position à l'écran. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .controls,
+    .meterColumn {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 80%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route {
+    animation: none;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
   }
 }

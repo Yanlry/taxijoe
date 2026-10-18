@@ -1,21 +1,41 @@
-/* Boîtier du taximètre : conteneur de référence pour la taille des chiffres (unités cqi). */
+/* Le taximètre et sa note de course, l'une glissée sous l'autre. */
+.taximeter {
+  display: grid;
+}
+
+/* Boîtier : conteneur de référence pour la taille des chiffres (unités cqi), une vis à chaque coin. */
 .meter {
   container-type: inline-size;
-  padding: clamp(16px, 3vw, 28px);
+  position: relative;
+  z-index: 1;
+  padding: clamp(20px, 3vw, 30px);
   border: 1px solid #272727;
   border-radius: var(--radius-panel);
-  background: linear-gradient(180deg, #0e0e0e 0%, var(--color-meter-case) 45%);
+  background:
+    radial-gradient(circle at 12px 12px, #3c3c3c 0 2px, #141414 2.5px 4px, transparent 4.5px),
+    radial-gradient(circle at calc(100% - 12px) 12px, #3c3c3c 0 2px, #141414 2.5px 4px, transparent 4.5px),
+    radial-gradient(circle at 12px calc(100% - 12px), #3c3c3c 0 2px, #141414 2.5px 4px, transparent 4.5px),
+    radial-gradient(circle at calc(100% - 12px) calc(100% - 12px), #3c3c3c 0 2px, #141414 2.5px 4px, transparent 4.5px),
+    linear-gradient(180deg, #121212 0%, var(--color-meter-case) 45%);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    inset 0 1px 0 rgb(255 255 255 / 0.07),
     inset 0 -2px 0 rgb(0 0 0 / 0.6),
     0 0 0 6px #0a0a0a,
     0 0 0 7px #2a2a2a,
-    0 40px 80px -30px rgb(0 0 0 / 0.9);
+    0 40px 70px -30px rgb(0 0 0 / 0.75);
 }
 
-/* Curseur de distance intégré en haut du boîtier, séparé de l'afficheur par un filet. */
+/*
+ * Curseur de distance intégré en haut du boîtier (téléphone), séparé de l'afficheur par un filet :
+ * ses couleurs passent en version sombre (variables définies sur la section jaune).
+ */
 .controls {
-  /* Anneau autour du bouton du curseur : couleur du boîtier. */
+  --field-text: var(--color-text);
+  --field-muted: var(--color-text-muted);
+  --field-accent: var(--color-yellow);
+  --range-fill: var(--color-yellow);
+  --range-track: #4a4a4a;
+  --range-thumb: var(--color-yellow);
   --range-gap: #0d0d0d;
   margin-bottom: 18px;
   padding-bottom: 14px;
@@ -57,20 +77,60 @@
   box-shadow: inset 0 0 0 1.5px var(--color-amber);
 }
 
-/* Afficheur ambré */
+/* Afficheur ambré, avec un reflet de vitre. */
 .screen {
+  position: relative;
   display: flex;
   align-items: baseline;
   justify-content: flex-end;
   gap: 10px;
-  margin-block: 18px 16px;
-  padding: clamp(14px, 3vw, 24px) clamp(16px, 3vw, 26px);
+  margin-block: 18px 6px;
+  padding: calc(clamp(14px, 3vw, 24px) + 16px) clamp(16px, 3vw, 26px) clamp(14px, 3vw, 24px);
   overflow: hidden;
   border-radius: 16px;
   background: radial-gradient(120% 160% at 50% 0%, #1c1300 0%, #0b0800 55%, #060400 100%);
   box-shadow:
     inset 0 3px 14px rgb(0 0 0 / 0.9),
     inset 0 0 0 1px rgb(255 184 0 / 0.14);
+}
+
+.screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, rgb(255 255 255 / 0.07) 0 28%, transparent 28.5%);
+  pointer-events: none;
+}
+
+/* Voyants des tarifs : seul celui qui s'applique est allumé. */
+.leds {
+  position: absolute;
+  top: 12px;
+  left: clamp(16px, 3vw, 26px);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 400 0.875rem / 1 var(--font-mono);
+}
+
+.ledsLabel {
+  margin-right: 2px;
+  color: rgb(255 184 0 / 0.45);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.led {
+  color: rgb(255 184 0 / 0.14);
+  transition:
+    color 0.25s ease,
+    text-shadow 0.25s ease;
+}
+
+.ledOn {
+  color: var(--color-amber);
+  text-shadow: 0 0 8px rgb(255 184 0 / 0.85);
 }
 
 .readout {
@@ -88,10 +148,29 @@
 .digits {
   position: absolute;
   inset: 0;
+  display: flex;
   color: var(--color-amber);
   text-shadow:
     0 0 4px rgb(255 184 0 / 0.55),
     0 0 18px rgb(255 184 0 / 0.35);
+}
+
+/* Chaque chiffre : une fenêtre d'un caractère sur une bande 0-9 qui roule jusqu'à la valeur (--n). */
+.digitCell {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+}
+
+.digitStrip {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(calc(var(--n) * -1em));
+  transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.digitStrip > span {
+  height: 1em;
 }
 
 .currency {
@@ -100,47 +179,143 @@
   text-shadow: 0 0 10px rgb(255 184 0 / 0.4);
 }
 
-/* Détail : prise en charge, prix au km, distance, minimum (2 x 2, puis sur une ligne si la place le permet) */
-.details {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
-  overflow: hidden;
-  border-radius: 14px;
-  background: #262626;
+/* Fente d'impression, d'où sort la note de course. */
+.slot {
+  display: block;
+  width: 72%;
+  height: 7px;
+  margin: 20px auto -6px;
+  border-radius: var(--radius-pill);
+  background: #000;
+  box-shadow:
+    inset 0 2px 3px rgb(0 0 0 / 0.95),
+    0 1px 0 rgb(255 255 255 / 0.07);
 }
 
-.detail {
+/* ---------- Note de course ---------- */
+
+/* L'ombre est portée par l'enveloppe : le masque dentelé de la note la couperait. */
+.receiptShadow {
+  position: relative;
+  z-index: 0;
+  width: min(86%, 420px);
+  margin: -12px auto 0;
+  filter: drop-shadow(0 16px 16px rgb(0 0 0 / 0.22));
+  transform: rotate(-1.2deg);
+  transform-origin: 50% 0;
+}
+
+/* Papier crème, bas dentelé (masque en dents de scie). */
+.receipt {
+  padding: 30px 22px 34px;
+  background:
+    linear-gradient(180deg, rgb(0 0 0 / 0.1), transparent 18px),
+    #f7f2e4;
+  color: var(--color-ink);
+  font: 400 0.9375rem / 1.3 var(--font-mono);
+  -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 16px 100%;
+  mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 16px 100%;
+}
+
+.receiptTitle {
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
-  gap: 8px;
-  padding: 12px 14px;
-  background: #0b0b0b;
-}
-
-.detail dt {
-  color: var(--color-text-muted);
-  font: 600 0.6875rem / 1.25 var(--font-body);
-  letter-spacing: 0.12em;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px dashed rgb(13 13 13 / 0.28);
+  font: 700 0.75rem / 1 var(--font-body);
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
-.detail dd {
-  color: var(--color-text);
-  font: 400 clamp(1rem, 2.4vw, 1.25rem) / 1.1 var(--font-mono);
+.receiptTitle span {
+  color: rgb(13 13 13 / 0.55);
+}
+
+.lines {
+  display: grid;
+  gap: 8px;
+}
+
+/* Libellé, points de conduite, valeur. */
+.line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.line dt {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.line dt::after {
+  content: '';
+  flex: 1;
+  min-width: 12px;
+  border-bottom: 2px dotted rgb(13 13 13 / 0.28);
+  transform: translateY(-3px);
+}
+
+.line dd {
   white-space: nowrap;
-  transition: color 0.25s ease;
 }
 
-/* Course minimum appliquée : la case s'allume en ambré. */
-.detailActive dt,
-.detailActive dd {
-  color: var(--color-amber);
+/* Course minimum appliquée : surlignée au marqueur jaune. */
+.lineActive dt,
+.lineActive dd {
+  background: linear-gradient(transparent 50%, rgb(255 210 31 / 0.9) 50%);
 }
 
-@container (min-width: 520px) {
-  .details {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+.total {
+  align-items: center;
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 2px dashed rgb(13 13 13 / 0.28);
+}
+
+.total dt {
+  font: 400 0.9375rem / 1 var(--font-display);
+  text-transform: uppercase;
+}
+
+.total dt::after {
+  display: none;
+}
+
+/* Le total s'imprime à nouveau à chaque changement. */
+.totalValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  animation: print 0.45s ease-out both;
+}
+
+@keyframes print {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.receiptFooter {
+  margin-top: 16px;
+  color: rgb(13 13 13 / 0.55);
+  font: 600 0.75rem / 1 var(--font-body);
+  letter-spacing: 0.14em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .digitStrip {
+    transition: none;
+  }
+
+  .totalValue {
+    animation: none;
   }
 }
