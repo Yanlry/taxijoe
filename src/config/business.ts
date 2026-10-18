@@ -12,6 +12,21 @@ import type { BusinessConfig, FareConfig, MeterConfig, ServiceItem } from '../ty
 /** Ville principale : reprise dans le titre, le texte d'accueil et la zone desservie. */
 const CITY = 'Lys-lez-Lannoy';
 
+/**
+ * Villes et lieux qui tournent autour du logo de l'accueil, répartis à égale distance sur le cercle
+ * (le premier, la ville de Joe, est mis en avant). En ajouter ou en retirer redistribue les autres.
+ */
+export const destinations: readonly string[] = [
+  CITY,
+  'Roubaix',
+  'Lille',
+  'Aéroport',
+  'Villeneuve-d’Ascq',
+  'Belgique',
+  'Tourcoing',
+  'Longues distances',
+];
+
 export const business: BusinessConfig = {
   name: 'Taxi Joe',
 

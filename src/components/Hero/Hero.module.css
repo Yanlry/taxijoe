@@ -1,20 +1,132 @@
 .hero {
   position: relative;
-  padding-block: clamp(40px, 7vw, 96px) clamp(56px, 8vw, 112px);
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding-block: clamp(40px, 7vw, 96px) clamp(72px, 9vw, 128px);
 }
 
-.hero::before {
+/* Sur grand écran, l'accueil occupe la hauteur de la fenêtre sous l'en-tête. */
+@media (min-width: 1024px) {
+  .hero {
+    min-height: min(900px, calc(100svh - var(--header-offset)));
+  }
+}
+
+/* ---------- Décor de nuit ---------- */
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.backdrop::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(55% 55% at 78% 45%, rgb(255 210 31 / 0.07), transparent 70%);
-  pointer-events: none;
+  background:
+    radial-gradient(48% 58% at 76% 42%, rgb(255 210 31 / 0.13), transparent 70%),
+    radial-gradient(40% 40% at 8% 0%, rgb(255 184 0 / 0.07), transparent 70%);
 }
+
+/* Sol quadrillé en perspective, qui défile vers l'avant comme une route sous les roues. */
+.floor {
+  position: absolute;
+  right: -25%;
+  bottom: 0;
+  left: -25%;
+  height: 46%;
+  overflow: hidden;
+  transform: perspective(520px) rotateX(64deg);
+  transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000, transparent 85%);
+  mask-image: linear-gradient(to top, #000, transparent 85%);
+}
+
+.floorGrid {
+  position: absolute;
+  top: -64px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image:
+    linear-gradient(rgb(255 210 31 / 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 210 31 / 0.11) 1px, transparent 1px);
+  background-size: 64px 64px;
+  animation: floor 2.4s linear infinite;
+}
+
+@keyframes floor {
+  to {
+    transform: translateY(64px);
+  }
+}
+
+/* Traînées de phares (pose longue) qui traversent l'écran dans les deux sens. */
+.trails {
+  position: absolute;
+  right: 0;
+  bottom: 3%;
+  left: 0;
+  height: 28%;
+}
+
+.trail {
+  --tint: 255 210 31;
+  --tip: #fff6d6;
+  --direction: 90deg;
+  position: absolute;
+  top: var(--y);
+  left: 0;
+  width: clamp(160px, 22vw, 340px);
+  height: var(--h);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(var(--direction), transparent, rgb(var(--tint) / 0.9) 72%, var(--tip));
+  opacity: 0.45;
+  filter: blur(var(--blur));
+  animation: trail var(--t) linear infinite;
+  animation-delay: var(--d);
+}
+
+.trailWarm {
+  --tint: 255 184 0;
+  --tip: #ffd9a0;
+}
+
+.trailReverse {
+  --direction: 270deg;
+  animation-name: trail-reverse;
+}
+
+@keyframes trail {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100vw);
+  }
+}
+
+@keyframes trail-reverse {
+  from {
+    transform: translateX(100vw);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* ---------- Texte ---------- */
 
 .grid {
   position: relative;
   display: grid;
-  gap: clamp(40px, 6vw, 72px);
+  gap: clamp(48px, 7vw, 80px);
   align-items: center;
 }
 
@@ -30,7 +142,7 @@
   line-height: 0.98;
 }
 
-.title > span {
+.line {
   display: block;
 }
 
@@ -62,20 +174,21 @@
  *
  * Animation écrite en entier sur chaque trait : un raccourci « animation » sans nom
  * est réduit à « none » par la minification du build, et les traits ne se dessinaient plus.
+ * Premier tracé à 1,3 s : une fois la ligne du titre apparue.
  */
 
 /* Premier trait « / », tracé depuis la gauche. */
 .struck::before {
   transform: translateY(0.24em) rotate(-12deg);
   transform-origin: left center;
-  animation: strike-up 4.5s cubic-bezier(0.65, 0, 0.35, 1) 0.5s infinite both;
+  animation: strike-up 4.5s cubic-bezier(0.65, 0, 0.35, 1) 1.3s infinite both;
 }
 
 /* Second trait « \ », tracé depuis la droite juste après. */
 .struck::after {
   transform: translateY(0.24em) rotate(12deg);
   transform-origin: right center;
-  animation: strike-down 4.5s cubic-bezier(0.65, 0, 0.35, 1) 0.5s infinite both;
+  animation: strike-down 4.5s cubic-bezier(0.65, 0, 0.35, 1) 1.3s infinite both;
 }
 
 /*
@@ -139,9 +252,218 @@
   flex: 1 1 100%;
 }
 
+/* ---------- Logo sur son cadran ---------- */
+
+/* Empilé sous le texte : marge au-dessus pour que le cadran et ses destinations ne touchent pas les boutons. */
+.stage {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  padding-top: clamp(56px, 13vw, 120px);
+}
+
+/*
+ * Logo qui apparaît puis flotte doucement, avec son cadran derrière et son reflet au sol.
+ * Empilé, il laisse 60 px de chaque côté aux destinations qui tournent autour.
+ */
+.logoWrap {
+  position: relative;
+  isolation: isolate;
+  width: min(calc(100% - 120px), 460px);
+  margin-bottom: clamp(56px, 8vw, 120px);
+  animation:
+    logo-in 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both,
+    float 6s ease-in-out 1.4s infinite;
+}
+
+/* Halo tournant et cadran gradué (façon compteur), centrés sur le logo. */
+.halo,
+.dial {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -1;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% -50%;
+}
+
+.halo {
+  width: min(128%, 620px);
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgb(255 210 31 / 0.3) 60deg,
+    transparent 140deg,
+    transparent 200deg,
+    rgb(255 184 0 / 0.24) 260deg,
+    transparent 330deg
+  );
+  filter: blur(48px);
+  animation: spin 16s linear infinite;
+}
+
+.dial {
+  width: min(108%, 520px);
+  background: repeating-conic-gradient(rgb(255 210 31 / 0.38) 0 0.5deg, transparent 0.5deg 6deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 12px), #000 calc(100% - 11px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 12px), #000 calc(100% - 11px));
+  animation: spin 90s linear infinite reverse;
+}
+
+/* Graduations principales, plus longues, tous les 30°. */
+.dial::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: repeating-conic-gradient(var(--color-yellow) 0 1.2deg, transparent 1.2deg 30deg);
+  opacity: 0.55;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 22px), #000 calc(100% - 21px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 22px), #000 calc(100% - 21px));
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/*
+ * Destinations en orbite sur le cercle du cadran (même taille que lui) : le cercle tourne
+ * comme le cadran, et chaque étiquette tourne en sens inverse pour rester droite et lisible.
+ */
+.orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  width: min(108%, 520px);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  animation: spin 90s linear infinite reverse;
+  pointer-events: none;
+}
+
+/* Chaque destination couvre tout le cercle, tourné de son angle ; son étiquette est posée en haut. */
+.place {
+  position: absolute;
+  inset: 0;
+  transform: rotate(var(--angle));
+}
+
+.placeLabel {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border: 1px solid rgb(255 210 31 / 0.35);
+  border-radius: var(--radius-pill);
+  background: rgb(13 13 13 / 0.85);
+  color: var(--color-text);
+  font: 700 0.6875rem / 1 var(--font-body);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 10px 20px -12px rgb(0 0 0 / 0.9);
+  /* Centrée sur le cercle ; « rotate » annule l'angle de placement, l'animation annule la rotation du cercle. */
+  translate: -50% -50%;
+  rotate: calc(-1 * var(--angle));
+  animation: spin 90s linear infinite;
+}
+
+.placeLabel svg {
+  flex-shrink: 0;
+  color: var(--color-yellow);
+}
+
+/* La ville de Joe, mise en avant en jaune. */
+.placeHome {
+  border-color: var(--color-yellow);
+  background: var(--color-yellow);
+  color: var(--color-ink);
+}
+
+.placeHome svg {
+  color: var(--color-ink);
+}
+
+/* Lueur posée au sol sous le logo. */
+.logoWrap::after {
+  content: '';
+  position: absolute;
+  top: 96%;
+  right: 12%;
+  left: 12%;
+  height: 34px;
+  background: radial-gradient(closest-side, rgb(255 210 31 / 0.35), transparent);
+  filter: blur(6px);
+}
+
+.reflection {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  margin-top: 8px;
+  opacity: 0.2;
+  filter: blur(1px);
+  transform: scaleY(-1);
+  /* Masque défini avant le retournement : opaque près du logo, effacé vers le bas. */
+  -webkit-mask-image: linear-gradient(to top, #000, transparent 55%);
+  mask-image: linear-gradient(to top, #000, transparent 55%);
+}
+
+@keyframes logo-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.94);
+  }
+}
+
+@keyframes float {
+  50% {
+    translate: 0 -10px;
+  }
+}
+
+/* Indicateur de défilement (souris), sur grand écran assez haut. */
+.scrollCue {
+  display: none;
+}
+
+@keyframes wheel {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
 @media (min-width: 480px) {
   .actions > a {
     flex: 0 0 auto;
+  }
+}
+
+/* Petit écran : étiquettes plus compactes, pour que les destinations tiennent autour du logo. */
+@media (max-width: 639px) {
+  .placeLabel {
+    gap: 4px;
+    padding: 5px 8px;
+    font-size: 0.5625rem;
+    letter-spacing: 0.08em;
   }
 }
 
@@ -151,12 +473,99 @@
     grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
     gap: 48px;
   }
+
+  .stage {
+    padding-top: 0;
+  }
+
+  /* Colonne étroite : le logo en occupe toute la largeur, les destinations débordent dans les marges. */
+  .logoWrap {
+    width: min(100%, 460px);
+  }
+}
+
+@media (min-width: 1024px) and (min-height: 760px) {
+  .scrollCue {
+    position: absolute;
+    bottom: 26px;
+    left: 50%;
+    display: block;
+    width: 26px;
+    height: 40px;
+    border: 2px solid rgb(245 242 232 / 0.32);
+    border-radius: 14px;
+    translate: -50% 0;
+  }
+
+  .scrollCue::after {
+    content: '';
+    position: absolute;
+    top: 7px;
+    left: 50%;
+    width: 4px;
+    height: 8px;
+    margin-left: -2px;
+    border-radius: 2px;
+    background: var(--color-yellow);
+    animation: wheel 1.8s ease-in-out infinite;
+  }
+}
+
+/*
+ * Apparitions au chargement : le texte monte ligne par ligne en sortant d'un léger flou.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .line,
+  .lead,
+  .actions {
+    animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .line:nth-child(1) {
+    animation-delay: 0.15s;
+  }
+
+  .line:nth-child(2) {
+    animation-delay: 0.27s;
+  }
+
+  .line:nth-child(3) {
+    animation-delay: 0.39s;
+  }
+
+  .lead {
+    animation-delay: 0.55s;
+  }
+
+  .actions {
+    animation-delay: 0.67s;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(24px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .floorGrid,
+  .halo,
+  .dial,
+  .orbit,
+  .placeLabel,
+  .logoWrap,
+  .scrollCue::after,
   .struck::before,
   .struck::after {
     animation: none;
+  }
+
+  /* Immobiles, les traînées de phares n'ont plus de sens : elles disparaissent. */
+  .trails {
+    display: none;
   }
 }
 
