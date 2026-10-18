@@ -1,19 +1,85 @@
+/* Carte de service : conteneur de référence pour sa propre mise en page (requête de conteneur). */
 .card {
-  display: flex;
-  flex-direction: column;
+  container-type: inline-size;
+  position: relative;
+  isolation: isolate;
   width: 100%;
   overflow: hidden;
-  border: 1px solid #262626;
-  border-radius: var(--radius-card);
-  background: var(--color-surface-2);
+  border: 1px solid #232323;
+  border-radius: var(--radius-panel);
+  background: linear-gradient(180deg, #171717 0%, #101010 100%);
   transition:
-    transform 0.25s ease,
-    border-color 0.25s ease;
+    transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1),
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+/* Halo qui suit le pointeur (--spot-x / --spot-y posées en JavaScript), puis liseré lumineux sur le bord. */
+.card::before,
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.card::before {
+  z-index: -1;
+  background: radial-gradient(
+    420px circle at var(--spot-x, 50%) var(--spot-y, 0%),
+    rgb(255 210 31 / 0.1),
+    transparent 60%
+  );
+}
+
+.card::after {
+  z-index: 2;
+  padding: 1px;
+  background: radial-gradient(
+    320px circle at var(--spot-x, 50%) var(--spot-y, 0%),
+    rgb(255 210 31 / 0.8),
+    transparent 55%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
 }
 
 .card:hover {
-  border-color: rgb(255 210 31 / 0.45);
-  transform: translateY(-4px);
+  border-color: #2e2e2e;
+  box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.9);
+  transform: translateY(-6px);
+}
+
+.card:hover::before,
+.card:hover::after {
+  opacity: 1;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Scène animée, encastrée dans la carte. */
+.media {
+  position: relative;
+  flex-shrink: 0;
+  height: 210px;
+  margin: 10px 10px 0;
+  overflow: hidden;
+  border-radius: calc(var(--radius-panel) - 8px);
+  background: #0b0b0b;
+  box-shadow: inset 0 0 0 1px rgb(245 242 232 / 0.05);
 }
 
 .body {
@@ -22,25 +88,49 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 14px;
-  padding: 28px 24px 32px;
+  padding: 24px 26px 28px;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .icon {
   display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
   background: rgb(255 210 31 / 0.1);
   color: var(--color-yellow);
+  box-shadow: inset 0 0 0 1px rgb(255 210 31 / 0.2);
+}
+
+/* Numéro de carte façon compteur : « 01/04 ». */
+.index {
+  color: var(--color-amber);
+  font: 400 1.125rem / 1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 10px rgb(255 184 0 / 0.35);
+}
+
+.total {
+  color: var(--color-text-muted);
+  opacity: 0.6;
+  text-shadow: none;
 }
 
 .title {
-  font-size: 1.375rem;
-  line-height: 1.1;
+  font-size: clamp(1.5rem, 2.4vw, 1.875rem);
+  line-height: 1.05;
 }
 
 .text {
+  max-width: 34rem;
   color: var(--color-text-muted);
 }
 
@@ -55,6 +145,27 @@
   color: var(--color-yellow);
   font-size: 0.9375rem;
   font-weight: 600;
+}
+
+/* Carte large (bento) : texte à gauche, scène à droite sur toute la hauteur. */
+@container (min-width: 600px) {
+  .layout {
+    flex-direction: row;
+  }
+
+  .media {
+    order: 2;
+    flex: 1 1 52%;
+    height: auto;
+    min-height: 290px;
+    margin: 10px 10px 10px 0;
+  }
+
+  .body {
+    flex: 1 1 48%;
+    justify-content: center;
+    padding: 36px 36px 36px 38px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

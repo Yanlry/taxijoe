@@ -83,7 +83,10 @@ export const meterSettings: MeterConfig = {
   approachKm: 1.5,
 };
 
-/** Cartes de la section « Où Joe vous emmène » (affichées dans cet ordre). */
+/**
+ * Cartes de la section « Où Joe vous emmène » (affichées dans cet ordre ; la 1re et la 4e sont larges).
+ * `highlights` : exemples de destinations qui défilent dans l'illustration de la carte.
+ */
 export const services: readonly ServiceItem[] = [
   {
     id: 'gares-aeroports',
@@ -91,6 +94,7 @@ export const services: readonly ServiceItem[] = [
     title: 'Gares et aéroports',
     description:
       'Train à l’aube ou vol en soirée : réservez votre trajet à l’avance, Joe vous attend à l’heure convenue.',
+    highlights: ['Lille-Lesquin', 'Lille-Europe', 'Lille-Flandres', 'Paris-CDG', 'Bruxelles-Zaventem'],
   },
   {
     id: 'transport-medical',
@@ -113,5 +117,6 @@ export const services: readonly ServiceItem[] = [
     title: 'Longues distances',
     description:
       'Une autre ville, un aéroport éloigné, un rendez-vous important : demandez une estimation et partez l’esprit tranquille.',
+    highlights: ['Paris', 'Bruxelles', 'Amiens', 'Côte d’Opale', 'Partout'],
   },
 ];

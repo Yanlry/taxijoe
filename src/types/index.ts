@@ -91,6 +91,8 @@ export interface ServiceItem {
   description: string;
   /** Affiche « Taxi conventionné CPAM » sur cette carte si business.isCpamApproved est vrai. */
   showCpamBadge?: boolean;
+  /** Exemples de destinations qui défilent dans l'illustration de la carte (tableau des départs, panneau). */
+  highlights?: readonly string[];
 }
 
 /** Détail d'une estimation de course. */

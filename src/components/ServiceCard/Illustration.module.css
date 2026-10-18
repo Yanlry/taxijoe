@@ -1,0 +1,638 @@
+/* Scènes animées des cartes de service. Décoratives : tout est masqué aux lecteurs d'écran. */
+
+.root,
+.scene {
+  position: absolute;
+  inset: 0;
+}
+
+.scene {
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* ---------- Texte qui bascule comme un volet de tableau des départs ---------- */
+
+.ticker {
+  display: inline-grid;
+  perspective: 400px;
+}
+
+.ticker > * {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+}
+
+/* Réserve la largeur du plus long texte, sans l'afficher. */
+.tickerSizer {
+  visibility: hidden;
+}
+
+.tickerItem {
+  transform-origin: 50% 0;
+  animation: flip 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes flip {
+  from {
+    opacity: 0;
+    transform: rotateX(-90deg);
+  }
+}
+
+/* ---------- Gares et aéroports ---------- */
+
+.airport {
+  background:
+    radial-gradient(70% 80% at 50% 100%, rgb(255 210 31 / 0.1), transparent 70%),
+    radial-gradient(rgb(245 242 232 / 0.07) 1px, transparent 1.5px) 0 0 / 22px 22px,
+    #0b0b0b;
+}
+
+/* Cercle géant dont seul le haut est visible : la trajectoire de l'avion. */
+.orbit,
+.flight {
+  position: absolute;
+  top: 42%;
+  left: -30%;
+  width: 160%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.orbit {
+  border: 2px dashed rgb(255 210 31 / 0.22);
+}
+
+/* Le cercle tourne : l'avion, posé en haut, suit l'arc de gauche à droite. */
+.flight {
+  animation: fly 7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.plane {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  display: grid;
+  color: var(--color-yellow);
+  filter: drop-shadow(0 0 10px rgb(255 210 31 / 0.65));
+  /* L'icône pointe en diagonale : +45° pour suivre l'arc. */
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* Traînée lumineuse derrière l'avion. */
+.trail {
+  position: absolute;
+  top: 0;
+  right: calc(50% + 14px);
+  width: 120px;
+  height: 2px;
+  margin-top: -1px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(to left, rgb(255 210 31 / 0.85), transparent);
+}
+
+@keyframes fly {
+  0% {
+    opacity: 0;
+    transform: rotate(-40deg);
+  }
+
+  12%,
+  88% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: rotate(40deg);
+  }
+}
+
+/* Second avion, plus petit et plus pâle : il croise plus haut, de droite à gauche. */
+.flightFar {
+  top: 24%;
+  left: -10%;
+  width: 120%;
+  animation: fly-back 11s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  animation-delay: -4s;
+}
+
+.flightFar .plane {
+  opacity: 0.45;
+  filter: none;
+  /* Tourné vers la gauche : il suit l'arc dans l'autre sens. */
+  transform: translate(-50%, -50%) rotate(-135deg);
+}
+
+.flightFar .trail {
+  right: auto;
+  left: calc(50% + 10px);
+  width: 70px;
+  height: 1px;
+  background: linear-gradient(to right, rgb(245 242 232 / 0.35), transparent);
+}
+
+@keyframes fly-back {
+  0% {
+    opacity: 0;
+    transform: rotate(40deg);
+  }
+
+  12%,
+  88% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: rotate(-40deg);
+  }
+}
+
+/* Sol de l'aéroport et tour de contrôle, posée sur la ligne d'horizon. */
+.ground {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 44px;
+  border-top: 1px solid rgb(245 242 232 / 0.1);
+  background: linear-gradient(180deg, rgb(255 210 31 / 0.06), transparent 70%), #090909;
+}
+
+.tower {
+  position: absolute;
+  right: 9%;
+  bottom: 44px;
+  width: auto;
+  height: min(34%, 120px);
+  overflow: visible;
+}
+
+.towerBody {
+  fill: #050505;
+  stroke: rgb(245 242 232 / 0.14);
+  stroke-width: 1;
+}
+
+.towerMast {
+  stroke: rgb(245 242 232 / 0.3);
+  stroke-width: 1.5;
+}
+
+.towerGlass {
+  fill: var(--color-yellow);
+  opacity: 0.55;
+}
+
+/* Balise au sommet de la tour, qui clignote. */
+.beacon {
+  fill: var(--color-yellow);
+  filter: drop-shadow(0 0 4px rgb(255 210 31 / 0.9));
+  animation: beacon 1.6s steps(1, end) infinite;
+}
+
+@keyframes beacon {
+  50% {
+    opacity: 0.15;
+  }
+}
+
+/* Feux de piste qui s'allument en cascade. */
+.runway {
+  position: absolute;
+  right: 8%;
+  bottom: 16px;
+  left: 8%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.light {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(255 210 31 / 0.22);
+  animation: runway 1.8s linear infinite;
+  animation-delay: calc(var(--i) * 0.12s);
+}
+
+@keyframes runway {
+  0%,
+  30%,
+  100% {
+    background: rgb(255 210 31 / 0.22);
+    box-shadow: none;
+  }
+
+  10% {
+    background: var(--color-yellow);
+    box-shadow: 0 0 10px 2px rgb(255 210 31 / 0.6);
+  }
+}
+
+/* Tableau des départs façon afficheur ambré. */
+.board {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: grid;
+  gap: 5px;
+  padding: 10px 14px 11px;
+  border-radius: 12px;
+  background: rgb(5 5 5 / 0.88);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 184 0 / 0.2),
+    0 12px 24px -12px rgb(0 0 0 / 0.9);
+}
+
+.boardLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-yellow);
+  font: 700 0.6875rem / 1 var(--font-body);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.boardValue {
+  color: var(--color-amber);
+  font: 400 1.125rem / 1.1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgb(255 184 0 / 0.45);
+}
+
+/* ---------- Transport médical ---------- */
+
+.medical {
+  background:
+    linear-gradient(rgb(245 242 232 / 0.04) 1px, transparent 1px) 0 0 / 100% 22px,
+    linear-gradient(90deg, rgb(245 242 232 / 0.04) 1px, transparent 1px) 0 0 / 22px 100%,
+    radial-gradient(70% 70% at 50% 55%, rgb(255 210 31 / 0.07), transparent 70%),
+    #0b0b0b;
+}
+
+.ecg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ecgBase,
+.ecgGlow,
+.ecgPulse {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ecgBase {
+  stroke: rgb(255 210 31 / 0.16);
+  stroke-width: 4.5;
+}
+
+/*
+ * Un trait court (16 % du tracé) parcourt la courbe. pathLength = 1 sur le tracé :
+ * un écart de 1 garantit qu'un seul trait est visible à la fois.
+ */
+.ecgGlow,
+.ecgPulse {
+  stroke: var(--color-yellow);
+  stroke-dasharray: 0.16 1;
+  stroke-dashoffset: -0.42;
+  animation: ecg 2.8s linear infinite;
+}
+
+.ecgGlow {
+  stroke-width: 20;
+  opacity: 0.2;
+}
+
+.ecgPulse {
+  stroke-width: 6;
+}
+
+@keyframes ecg {
+  from {
+    stroke-dashoffset: 0.16;
+  }
+
+  to {
+    stroke-dashoffset: -1;
+  }
+}
+
+/* Croix médicale qui bat comme un cœur. */
+.cross {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgb(255 210 31 / 0.12);
+  animation: heartbeat 1.4s ease-out infinite;
+}
+
+.cross::before,
+.cross::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 2px;
+  background: var(--color-yellow);
+  transform: translate(-50%, -50%);
+}
+
+.cross::before {
+  width: 18px;
+  height: 6px;
+}
+
+.cross::after {
+  width: 6px;
+  height: 18px;
+}
+
+@keyframes heartbeat {
+  0% {
+    box-shadow: 0 0 0 0 rgb(255 210 31 / 0.45);
+    transform: scale(1);
+  }
+
+  12% {
+    transform: scale(1.1);
+  }
+
+  24% {
+    transform: scale(1);
+  }
+
+  70%,
+  100% {
+    box-shadow: 0 0 0 16px rgb(255 210 31 / 0);
+  }
+}
+
+/* ---------- Soirées et nuits ---------- */
+
+.night {
+  background: radial-gradient(120% 90% at 75% 0%, #1b1608 0%, #0c0b08 45%, #070707 100%);
+}
+
+.star {
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: #fff6d6;
+  box-shadow: 0 0 6px rgb(255 246 214 / 0.8);
+  animation: twinkle 3.2s ease-in-out infinite;
+  animation-delay: var(--d);
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.7);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Croissant de lune : un disque vide dont seule l'ombre intérieure est jaune. */
+.moon {
+  position: absolute;
+  top: 14%;
+  right: 14%;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  box-shadow: inset -11px 7px 0 0 var(--color-yellow);
+  filter: drop-shadow(0 0 14px rgb(255 210 31 / 0.55));
+  animation: float 7s ease-in-out infinite;
+}
+
+@keyframes float {
+  50% {
+    transform: translateY(-6px) rotate(-6deg);
+  }
+}
+
+.skyline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 58%;
+}
+
+.building {
+  fill: #050505;
+  stroke: rgb(245 242 232 / 0.08);
+  stroke-width: 1;
+}
+
+.pane {
+  fill: var(--color-yellow);
+  opacity: 0.85;
+}
+
+.flicker {
+  animation: flicker 5s linear infinite;
+  animation-delay: var(--d);
+}
+
+@keyframes flicker {
+  0%,
+  44%,
+  76%,
+  100% {
+    opacity: 0.85;
+  }
+
+  48%,
+  72% {
+    opacity: 0.08;
+  }
+}
+
+/*
+ * Rue : la bande fait deux fois le tour de la scène pour une pause entre deux passages ;
+ * le feu du taxi est à son extrémité droite, suivi d'une traînée.
+ */
+.street {
+  position: absolute;
+  bottom: 5%;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  transform: translateX(-35%);
+  animation: drive 7s linear infinite;
+}
+
+.street::before,
+.street::after {
+  content: '';
+  position: absolute;
+}
+
+.street::after {
+  top: 0;
+  right: 0;
+  width: 14px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-yellow);
+  box-shadow: 0 0 12px 3px rgb(255 210 31 / 0.7);
+}
+
+.street::before {
+  top: 1px;
+  right: 14px;
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(to left, rgb(255 210 31 / 0.6), transparent);
+}
+
+@keyframes drive {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* ---------- Longues distances ---------- */
+
+.road {
+  --horizon: 36%;
+  background:
+    radial-gradient(60% 40% at 50% var(--horizon), rgb(255 184 0 / 0.14), transparent 70%),
+    linear-gradient(180deg, #0e0c07 0%, #0b0b0b 40%, #090909 100%);
+}
+
+.horizon {
+  position: absolute;
+  top: var(--horizon);
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgb(255 184 0 / 0.55), transparent);
+}
+
+/* Route en perspective : bas-côtés clairs sous l'asphalte, légèrement plus larges. */
+.roadEdges,
+.asphalt {
+  position: absolute;
+  inset: var(--horizon) 0 0;
+}
+
+.roadEdges {
+  background: linear-gradient(180deg, rgb(245 242 232 / 0.08), rgb(245 242 232 / 0.6));
+  clip-path: polygon(46.5% 0, 53.5% 0, 99% 100%, 1% 100%);
+}
+
+.asphalt {
+  background: linear-gradient(180deg, #101010, #1c1c1c);
+  clip-path: polygon(47% 0, 53% 0, 96% 100%, 4% 100%);
+}
+
+/* Marquage central : chaque tiret part de l'horizon et grossit en s'approchant. */
+.dash {
+  position: absolute;
+  top: calc(40% + var(--i) * 15%);
+  left: 50%;
+  width: 6px;
+  height: 18px;
+  border-radius: 2px;
+  background: var(--color-yellow);
+  transform: translateX(-50%) scale(calc(0.4 + var(--i) * 0.35));
+  transform-origin: 50% 0;
+  animation: dash 1.8s cubic-bezier(0.55, 0, 1, 0.45) infinite;
+  animation-delay: calc(var(--i) * -0.45s);
+}
+
+@keyframes dash {
+  0% {
+    top: var(--horizon);
+    opacity: 0;
+    transform: translateX(-50%) scale(0.12);
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  100% {
+    top: 104%;
+    opacity: 1;
+    transform: translateX(-50%) scale(1.8);
+  }
+}
+
+/* Panneau jaune de déviation, sur son poteau. */
+.sign {
+  position: absolute;
+  top: 12%;
+  right: 7%;
+  display: grid;
+  gap: 4px;
+  padding: 8px 14px 9px;
+  border-radius: 8px;
+  background: var(--color-yellow);
+  color: var(--color-ink);
+  box-shadow:
+    inset 0 0 0 2px var(--color-ink),
+    inset 0 0 0 4px var(--color-yellow),
+    0 14px 28px -12px rgb(0 0 0 / 0.9);
+}
+
+/* Poteau, sous le panneau. */
+.sign::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 4px;
+  height: 64px;
+  margin-left: -2px;
+  background: linear-gradient(180deg, #3a3a3a, #1a1a1a);
+}
+
+.signLabel {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font: 700 0.625rem / 1 var(--font-body);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.signValue {
+  font: 400 1rem / 1.1 var(--font-display);
+  text-transform: uppercase;
+}
+
+/* ---------- Animations réduites : chaque scène reste visible, immobile. ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .scene *,
+  .scene *::before,
+  .scene *::after {
+    animation: none;
+  }
+}
