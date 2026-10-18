@@ -1,120 +1,165 @@
-import type { CSSProperties } from 'react';
-import { ArrowRight, MapPin } from 'lucide-react';
-import { business, destinations } from '../../config/business';
+import { useEffect, useState, type CSSProperties } from 'react';
+import { ArrowRight } from 'lucide-react';
+import { business, destinations, fares } from '../../config/business';
+import { useCycle } from '../../hooks/useCycle';
 import ui from '../../styles/ui.module.css';
-import { cx } from '../../utils/cx';
-import { GlowLogo } from '../GlowLogo';
+import { FlapRow, type FlapSegment } from './SplitFlap';
 import styles from './Hero.module.css';
 
-/** Traînées de phares du fond : hauteur (%), épaisseur et flou (px), durée et décalage (s), sens et teinte. */
-const TRAILS = [
-  { y: 8, size: 1, blur: 0, duration: 12, delay: -2, reverse: false, warm: false },
-  { y: 26, size: 1, blur: 0.5, duration: 9.5, delay: -7, reverse: true, warm: true },
-  { y: 44, size: 2, blur: 1, duration: 7.5, delay: -1, reverse: false, warm: false },
-  { y: 60, size: 2, blur: 1.5, duration: 6, delay: -4, reverse: true, warm: true },
-  { y: 76, size: 3, blur: 2, duration: 4.8, delay: -3, reverse: false, warm: false },
-  { y: 92, size: 4, blur: 2.5, duration: 4, delay: -0.5, reverse: true, warm: true },
-] as const;
+/** Palettes par rangée du grand tableau : les rangées plus courtes sont complétées par des palettes vides. */
+const BOARD_LENGTH = 12;
 
-/** Variables CSS passées en style inline. */
-const vars = (values: Record<string, string>) => values as CSSProperties;
+/** Accroche « Joe le taxi, il va pas partout. » sur trois rangées ; « pas » est barré (Joe va partout). */
+const TITLE_ROWS: readonly (readonly FlapSegment[])[] = [
+  [{ text: 'Joe', tone: 'accent' }, { text: ' le taxi,' }],
+  [{ text: 'il va ' }, { text: 'pas', tone: 'muted', className: styles.struck }],
+  [{ text: 'partout.', tone: 'accent' }],
+];
+
+/** Destinations affichées à la fois sur le panneau, et rythme de défilement. */
+const VISIBLE_DESTINATIONS = Math.min(4, destinations.length);
+const DESTINATION_LENGTH = Math.max(...destinations.map((place) => [...place].length));
+const CYCLE_MS = 4500;
+
+const timeFormatter = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit' });
+const pad = (value: number): string => String(value).padStart(2, '0');
+
+/** Heure locale du visiteur (« 14:32 »), mise à jour toutes les 10 secondes. */
+function useClock(): string {
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 10_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return timeFormatter.format(now);
+}
 
 /**
- * Section d'accueil, de nuit : sol en perspective qui défile et traînées de phares en fond.
- * À gauche, l'accroche « Joe le taxi, il va pas partout » (« pas » barré : Joe va partout),
- * le texte d'introduction et les boutons d'action. À droite, le grand logo allumé sur son cadran,
- * avec les destinations (`destinations`, src/config/business.ts) qui tournent tout autour, et son reflet.
+ * Section d'accueil façon tableau des départs à palettes : l'accroche s'écrit lettre par lettre
+ * sur un grand tableau (bandeau jaune : départ et heure locale), puis le texte d'introduction et les
+ * boutons, un panneau qui fait défiler les destinations (`destinations`, src/config/business.ts)
+ * et une fiche récapitulative (horaires, secteur, tarifs, licence).
+ * Le tableau est décoratif : le vrai titre et la liste des destinations sont fournis aux lecteurs d'écran.
  */
 export function Hero() {
+  const time = useClock();
+  const first = useCycle(destinations.length, CYCLE_MS);
+  const shownPlaces = Array.from({ length: VISIBLE_DESTINATIONS }, (_, row) => (first + row) % destinations.length);
+
   return (
     <section id="accueil" aria-labelledby="hero-title" className={styles.hero}>
-      <div aria-hidden="true" className={styles.backdrop}>
-        <span className={styles.floor}>
-          <span className={styles.floorGrid} />
-        </span>
-        <span className={styles.trails}>
-          {TRAILS.map((trail) => (
-            <span
-              key={trail.y}
-              className={cx(styles.trail, trail.reverse && styles.trailReverse, trail.warm && styles.trailWarm)}
-              style={vars({
-                '--y': `${trail.y}%`,
-                '--h': `${trail.size}px`,
-                '--blur': `${trail.blur}px`,
-                '--t': `${trail.duration}s`,
-                '--d': `${trail.delay}s`,
-              })}
-            />
-          ))}
-        </span>
-      </div>
+      <div className="container">
+        <h1 id="hero-title" className="visually-hidden">
+          Joe le taxi, il va partout.
+        </h1>
 
-      <div className={cx('container', styles.grid)}>
-        <div className={styles.content}>
-
-          <h1 id="hero-title" className={styles.title}>
-            <span className={styles.line}>
-              <span className={ui.accent}>Joe</span> le taxi,
-            </span>
-            <span className={styles.line}>
-              il va{' '}
-              {/* « pas » barré : masqué aux lecteurs d'écran, qui lisent le vrai message « il va partout ». */}
-              <s aria-hidden="true" className={styles.struck}>
-                pas
-              </s>
-            </span>
-            <span className={cx(styles.line, ui.accent)}>partout.</span>
-          </h1>
-
-          <p className={styles.lead}>
-            Votre taxi à <span className="nowrap">{business.city}</span>, 7&nbsp;jours sur&nbsp;7, jour et nuit. Gares et
-            aéroports, transport médical, soirées et longues distances&nbsp;: vous réservez, Joe vous conduit.
-          </p>
-
-          <div className={styles.actions}>
-            <a href="#reserver" className={ui.primary}>
-              Réserver une course
-              <ArrowRight aria-hidden="true" size={18} strokeWidth={2.25} />
-            </a>
-            <a href="#compteur" className={ui.outline}>
-              Estimer mon trajet
-            </a>
+        <div className={styles.boardWrap}>
+          <div className={styles.board}>
+            <div className={styles.boardBar}>
+              <p className={styles.boardRoute}>
+                <span className={styles.boardLabel}>Départ</span>
+                <span className="nowrap">{business.city}</span>
+              </p>
+              <p aria-hidden="true" className={styles.clock}>
+                <span className={styles.boardLabel}>Il est</span>
+                <FlapRow segments={[{ text: time, tone: 'accent' }]} scramble={4} />
+              </p>
+            </div>
+            <div className={styles.boardRows}>
+              {TITLE_ROWS.map((segments, row) => (
+                <FlapRow key={row} segments={segments} length={BOARD_LENGTH} delay={row * 5} scramble={10} />
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className={styles.stage}>
-          <div className={styles.logoWrap}>
-            <span aria-hidden="true" className={styles.halo} />
-            <span aria-hidden="true" className={styles.dial} />
-            <GlowLogo />
-            {/* Destinations réparties sur le cercle, qui tournent avec lui en restant droites. */}
-            <ul aria-label="Destinations desservies" className={styles.orbit}>
-              {destinations.map((place, index) => (
-                <li
-                  key={place}
-                  className={styles.place}
-                  style={vars({ '--angle': `${(360 / destinations.length) * index}deg` })}
-                >
-                  <span className={cx(styles.placeLabel, index === 0 && styles.placeHome)}>
-                    <MapPin aria-hidden="true" size={12} strokeWidth={2.5} />
-                    {place}
-                  </span>
-                </li>
+        <div className={styles.lower}>
+          <div className={styles.intro}>
+            <p className={styles.lead}>
+              Votre taxi à <span className="nowrap">{business.city}</span>, 7&nbsp;jours sur&nbsp;7, jour et nuit. Gares
+              et aéroports, transport médical, soirées et longues distances&nbsp;: vous réservez, Joe vous conduit.
+            </p>
+            <div className={styles.actions}>
+              <a href="#reserver" className={ui.primary}>
+                Réserver une course
+                <ArrowRight aria-hidden="true" size={18} strokeWidth={2.25} />
+              </a>
+              <a href="#compteur" className={ui.outline}>
+                Estimer mon trajet
+              </a>
+            </div>
+          </div>
+
+          <section aria-labelledby="destinations-title" className={styles.destinations}>
+            <div className={styles.destinationsHead}>
+              <h2 id="destinations-title" className={styles.destinationsTitle}>
+                Destinations
+              </h2>
+              <span aria-hidden="true" className={styles.counter}>
+                {pad(first + 1)}/{pad(destinations.length)}
+              </span>
+            </div>
+            <ul className="visually-hidden">
+              {destinations.map((place) => (
+                <li key={place}>{place}</li>
               ))}
             </ul>
-            <img
+            <ol
               aria-hidden="true"
-              alt=""
-              src={business.logo.src}
-              width={business.logo.width}
-              height={business.logo.height}
-              className={styles.reflection}
-            />
-          </div>
+              className={styles.departures}
+              style={{ '--cols': DESTINATION_LENGTH } as CSSProperties}
+            >
+              {shownPlaces.map((placeIndex, row) => (
+                <li key={row} className={styles.departure}>
+                  <span className={styles.departureIndex}>{pad(placeIndex + 1)}</span>
+                  <FlapRow
+                    segments={[
+                      { text: destinations[placeIndex].toUpperCase(), tone: row === 0 ? 'accent' : undefined },
+                    ]}
+                    length={DESTINATION_LENGTH}
+                    delay={row * 3}
+                    scramble={5}
+                  />
+                </li>
+              ))}
+            </ol>
+            <p className={styles.destinationsFoot}>Et partout ailleurs, sur réservation.</p>
+          </section>
         </div>
-      </div>
 
-      <span aria-hidden="true" className={styles.scrollCue} />
+        <dl className={styles.specs}>
+          <div className={styles.spec}>
+            <dt>Horaires</dt>
+            <dd>
+              {business.hours[0]}
+              <span>{business.hours[1]}</span>
+            </dd>
+          </div>
+          <div className={styles.spec}>
+            <dt>Secteur</dt>
+            <dd>
+              Partout
+              <span>Depuis {business.city}</span>
+            </dd>
+          </div>
+          <div className={styles.spec}>
+            <dt>Tarifs</dt>
+            <dd>
+              Réglementés
+              <span>{fares.source}</span>
+            </dd>
+          </div>
+          <div className={styles.spec}>
+            <dt>Licence</dt>
+            <dd>
+              N°&nbsp;{business.licenseNumber}
+              <span>Autorisation de stationnement</span>
+            </dd>
+          </div>
+        </dl>
+      </div>
     </section>
   );
 }

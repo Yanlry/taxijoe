@@ -1,5 +1,7 @@
+/* En-tête collant en haut de l'écran, sur toutes les tailles. */
 .header {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 50;
   border-bottom: 1px solid var(--color-border);
   background: rgb(13 13 13 / 0.94);
@@ -7,18 +9,18 @@
 
 @supports (backdrop-filter: blur(10px)) {
   .header {
-    background: rgb(13 13 13 / 0.82);
-    backdrop-filter: blur(10px);
+    background: rgb(13 13 13 / 0.78);
+    backdrop-filter: blur(12px);
   }
 }
 
-.inner {
+.inner,
+.menuTop {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 4px 16px;
-  padding-block: 12px 4px;
+  gap: 16px;
+  padding-block: 10px;
 }
 
 .brand {
@@ -31,59 +33,446 @@
   width: clamp(104px, 30vw, 130px);
 }
 
-.nav {
-  order: 3;
-  flex-basis: 100%;
-}
-
-/* Liens calés à droite, y compris sur mobile où ils passent sur leur propre ligne. */
-.links {
+.actions {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 0 24px;
-}
-
-.link {
-  display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  gap: 10px;
+}
+
+/* ---------- Boutons ronds : appel, menu, fermeture ---------- */
+
+.callButton,
+.menuButton,
+.closeButton {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* Appel : pastille jaune ; au survol, une onde s'en échappe comme une sonnerie. */
+.callButton {
+  position: relative;
+  background: var(--color-yellow);
+  color: var(--color-ink);
+  box-shadow: 0 8px 20px -10px rgb(255 210 31 / 0.6);
+}
+
+.callButton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--color-yellow);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.callButton:hover {
+  background: var(--color-yellow-hover);
+  transform: translateY(-1px);
+}
+
+.callButton:hover::after {
+  animation: ring 1.2s ease-out infinite;
+}
+
+@keyframes ring {
+  from {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+.menuButton,
+.closeButton {
+  border: 1px solid rgb(245 242 232 / 0.18);
+  background: rgb(245 242 232 / 0.04);
   color: var(--color-text);
-  font-weight: 600;
-  text-decoration: none;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 6px;
-  transition: color 0.2s ease;
 }
 
-.link:hover {
+.menuButton:hover,
+.closeButton:hover {
+  border-color: var(--color-yellow);
   color: var(--color-yellow);
-  text-decoration-line: underline;
 }
 
-.call {
-  white-space: nowrap;
+/* Icône du menu : deux traits de longueurs différentes, alignés au survol. */
+.burger {
+  position: relative;
+  width: 22px;
+  height: 12px;
+}
+
+.burger::before,
+.burger::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: width 0.25s ease;
+}
+
+.burger::before {
+  top: 0;
+  width: 22px;
+}
+
+.burger::after {
+  bottom: 0;
+  width: 13px;
+}
+
+.menuButton:hover .burger::after {
+  width: 22px;
+}
+
+/* Croix de fermeture : pivote au survol. */
+.cross {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  transition: transform 0.3s ease;
+}
+
+.cross::before,
+.cross::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  margin-top: -1px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.cross::before {
+  transform: rotate(45deg);
+}
+
+.cross::after {
+  transform: rotate(-45deg);
+}
+
+.closeButton:hover .cross {
+  transform: rotate(90deg);
+}
+
+/* ---------- Menu plein écran ---------- */
+
+/*
+ * Fenêtre de dialogue native sur toute la fenêtre. Le fond (::backdrop) est jaune : il s'ouvre en cercle
+ * juste avant le menu sombre, ce qui dessine un liseré jaune sur le bord du cercle.
+ */
+.menu {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  border: 0;
+  background:
+    linear-gradient(rgb(245 242 232 / 0.03) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, rgb(245 242 232 / 0.03) 1px, transparent 1px) 0 0 / 48px 48px,
+    var(--color-bg);
+  color: var(--color-text);
+}
+
+.menu::backdrop {
+  background: var(--color-yellow);
+}
+
+.menuInner {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.menuBody {
+  display: grid;
+  flex: 1;
+  align-content: center;
+  gap: clamp(40px, 6vw, 72px);
+  padding-block: clamp(28px, 6vw, 64px);
+}
+
+.menuEyebrow {
+  margin-bottom: 18px;
+  color: var(--color-yellow);
+  font: 700 0.8125rem / 1 var(--font-body);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Grands liens numérotés (numéros dessinés, pas ceux de la liste), séparés par des filets. */
+.menuLinks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menuItem {
+  border-top: 1px solid var(--color-border);
+}
+
+.menuItem:last-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.menuLink {
+  display: grid;
+  grid-template-areas:
+    'index label arrow'
+    'index hint arrow';
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: clamp(16px, 3vw, 32px);
+  padding-block: clamp(14px, 2.4vw, 22px);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.menuIndex {
+  grid-area: index;
+  align-self: start;
+  padding-top: 0.5em;
+  color: var(--color-amber);
+  font: 400 0.9375rem / 1 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.menuLabel {
+  grid-area: label;
+  font: 400 clamp(44px, 8vw, 96px) / 0.95 var(--font-display);
+  text-transform: uppercase;
+  transition:
+    color 0.3s ease,
+    transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.menuHint {
+  grid-area: hint;
+  margin-top: 8px;
+  color: var(--color-text-muted);
+  font-size: clamp(0.9375rem, 1.4vw, 1.0625rem);
+}
+
+.menuArrow {
+  grid-area: arrow;
+  color: var(--color-yellow);
+  opacity: 0;
+  transform: translate(-12px, 12px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.menuLink:hover .menuLabel,
+.menuLink:focus-visible .menuLabel {
+  color: var(--color-yellow);
+  transform: translateX(12px);
+}
+
+.menuLink:hover .menuArrow,
+.menuLink:focus-visible .menuArrow {
+  opacity: 1;
+  transform: none;
+}
+
+/* Écrans tactiles (pas de survol) : la flèche reste visible. */
+@media (hover: none) {
+  .menuArrow {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Carte de réservation directe. */
+.menuCard {
+  padding: clamp(20px, 3vw, 28px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  background: rgb(20 20 20 / 0.85);
+}
+
+.menuCall {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 22px 12px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-yellow);
+  color: var(--color-ink);
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.menuCall:hover {
+  background: var(--color-yellow-hover);
+}
+
+.menuCall:focus-visible {
+  outline-color: var(--color-text);
+}
+
+.menuCallIcon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-ink);
+  color: var(--color-yellow);
+}
+
+.menuCallText {
+  display: grid;
+  gap: 3px;
+}
+
+.menuCallLabel {
+  font: 700 0.75rem / 1 var(--font-body);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.menuCallNumber {
+  font: 400 clamp(1.25rem, 2.2vw, 1.5rem) / 1.1 var(--font-display);
+}
+
+.menuFacts {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.menuFacts dt {
+  margin-bottom: 6px;
+  color: var(--color-yellow);
+  font: 700 0.6875rem / 1 var(--font-body);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.menuFacts dd {
+  color: var(--color-text-muted);
+}
+
+.menuBand {
+  flex-shrink: 0;
 }
 
 @media (min-width: 900px) {
-  .header {
-    position: sticky;
-    top: 0;
-  }
-
-  .inner {
-    flex-wrap: nowrap;
-    gap: 32px;
+  .inner,
+  .menuTop {
     padding-block: 12px;
   }
+}
 
-  .nav {
-    order: 0;
-    flex-basis: auto;
-    margin-left: auto;
+@media (min-width: 960px) {
+  .menuBody {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    align-items: end;
+  }
+}
+
+/*
+ * Animations : le cercle jaune puis le menu s'ouvrent depuis le bouton (--origin-x / --origin-y posées
+ * en JavaScript), les liens arrivent en cascade, la croix se trace ; à la fermeture, tout se referme
+ * vers le bouton. Sans animation si l'utilisateur a demandé à les réduire.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .menu[open]::backdrop {
+    animation: menu-in 0.5s cubic-bezier(0.7, 0, 0.2, 1) both;
   }
 
-  .links {
-    gap: 32px;
+  .menu[open] {
+    animation: menu-in 0.62s cubic-bezier(0.7, 0, 0.2, 1) 0.06s both;
+  }
+
+  .menu[data-closing]::backdrop {
+    animation: menu-out 0.42s cubic-bezier(0.7, 0, 0.2, 1) 0.06s both;
+  }
+
+  .menu[data-closing] {
+    animation: menu-out 0.5s cubic-bezier(0.7, 0, 0.2, 1) both;
+  }
+
+  .menu[open] .menuItem {
+    animation: item-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(0.32s + var(--i) * 0.08s);
+  }
+
+  .menu[open] .menuCard {
+    animation: item-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.56s both;
+  }
+
+  .menu[open] .cross::before {
+    animation: cross-in-a 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) 0.4s both;
+  }
+
+  .menu[open] .cross::after {
+    animation: cross-in-b 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) 0.5s both;
+  }
+}
+
+@keyframes menu-in {
+  from {
+    clip-path: circle(0 at var(--origin-x, calc(100% - 46px)) var(--origin-y, 46px));
+  }
+
+  to {
+    clip-path: circle(150vmax at var(--origin-x, calc(100% - 46px)) var(--origin-y, 46px));
+  }
+}
+
+@keyframes menu-out {
+  from {
+    clip-path: circle(150vmax at var(--origin-x, calc(100% - 46px)) var(--origin-y, 46px));
+  }
+
+  to {
+    clip-path: circle(0 at var(--origin-x, calc(100% - 46px)) var(--origin-y, 46px));
+  }
+}
+
+@keyframes item-in {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+}
+
+@keyframes cross-in-a {
+  from {
+    transform: rotate(45deg) scaleX(0);
+  }
+}
+
+@keyframes cross-in-b {
+  from {
+    transform: rotate(-45deg) scaleX(0);
   }
 }

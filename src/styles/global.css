@@ -1,12 +1,5 @@
 /* Styles de base communs à toute la page. */
 
-/* Intensité du halo du logo, animable (voir GlowLogo). */
-@property --logo-glow {
-  syntax: '<number>';
-  inherits: false;
-  initial-value: 1;
-}
-
 *,
 *::before,
 *::after {

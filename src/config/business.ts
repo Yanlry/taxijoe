@@ -38,7 +38,7 @@ export const business: BusinessConfig = {
   streetAddress: '196 rue Jean-Baptiste Lebas',
   postalCode: '59390',
   city: CITY,
-  serviceArea: `${CITY} , Roubaix , Lille et ses environs`,
+  serviceArea: `${CITY}, Roubaix, Lille et ses environs`,
 
   // Numéro de licence (autorisation de stationnement).
   licenseNumber: '3',

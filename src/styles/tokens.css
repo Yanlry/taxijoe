@@ -28,8 +28,11 @@
   --radius-card: 20px;
   --radius-panel: 28px;
 
-  /* Décalage des ancres sous l'en-tête collant (0 sur mobile, en-tête non collant). */
-  --header-offset: 0px;
+  /*
+   * Décalage des ancres sous l'en-tête collant : hauteur du logo (largeur × 543/960)
+   * + marges verticales (2 × 10 px) + filet du bas (1 px).
+   */
+  --header-offset: calc(clamp(104px, 30vw, 130px) * 0.5657 + 21px);
 
   /* Motif damier : à utiliser avec background-size = taille d'une tuile. */
   --checker: repeating-conic-gradient(var(--color-yellow) 0 25%, var(--color-ink) 0 50%);
